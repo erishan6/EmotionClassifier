@@ -1,4 +1,4 @@
-package Helper;
+package com.teamlab.ss18.ec.Helper;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

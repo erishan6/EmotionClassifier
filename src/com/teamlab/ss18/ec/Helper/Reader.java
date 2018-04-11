@@ -1,4 +1,4 @@
-package Helper;
+package com.teamlab.ss18.ec.Helper;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

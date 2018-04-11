@@ -1,4 +1,4 @@
-package com.company;
+package com.teamlab.ss18.ec;
 
 public class Main {
 
