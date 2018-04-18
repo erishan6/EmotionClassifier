@@ -11,8 +11,12 @@ public class Main {
         // TODO Ask prof for repeation case and approach
         String filepath = "data/trial.csv";
 
-        Corpus corpus = new Corpus("testCorpus", filepath);
+        Corpus corpus = new Corpus("testCorpus", filepath, 1);
 
+        Evaluator evaluator = new Evaluator(corpus);
+        System.out.println(evaluator.getRecallAverage());
+        System.out.println(evaluator.getPrecisionAverage());
+        System.out.println(evaluator.getFScoreAverage());
         /*
         Classifier.classify(corpus);
 

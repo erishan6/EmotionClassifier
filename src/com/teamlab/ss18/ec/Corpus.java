@@ -14,13 +14,23 @@ public class Corpus {
     private String name = "";
     private LinkedHashMap<UUID, Tweet> tweets;
     private String filePath = "";
-    public Corpus(String name, String filePath) {
+    private int numberOfLabels;
+    public Corpus(String name, String filePath, int numberOfLabels) {
         this.name = name;
         this.filePath = filePath;
+        this.numberOfLabels = numberOfLabels;
 
         tweets = createCorpus(this.filePath);
     }
 
+
+    public int getNumberOfLabels() {
+        return numberOfLabels;
+    }
+
+    public LinkedHashMap<UUID, Tweet> getTweets() {
+        return tweets;
+    }
 
     private LinkedHashMap createCorpus(String filePath) {
         //TODO: read file into hashMap (like in util)

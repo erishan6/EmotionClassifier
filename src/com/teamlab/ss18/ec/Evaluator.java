@@ -1,6 +1,9 @@
 package com.teamlab.ss18.ec;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by deniz on 11.04.18.
@@ -18,7 +21,54 @@ public class Evaluator {
         this.numOfLabels = numOfLabels;
         this.labels = new String[numOfLabels];
 
+
         fillMatrix(yPred, yGold);
+    }
+
+    public Evaluator(Corpus corpus){
+        this.labels = new String[corpus.getNumberOfLabels()];
+        fillMatrix(corpus);
+    }
+
+
+
+    /**
+     * this method creates and fills a confusion matrix
+     * @param corpus
+     */
+    private void fillMatrix(Corpus corpus) {
+        confusionMatrix = new double[corpus.getNumberOfLabels()+1][corpus.getNumberOfLabels()+1]; //initialize confusion matrix
+
+        int labelsSeen = 0;
+
+        for (UUID id : corpus.getTweets().keySet()) {
+            Tweet currentTweet = corpus.getTweets().get(id);
+
+
+            String currentPredictionLabel = currentTweet.getPredictedLabel();
+            String currentGoldLabel = currentTweet.getGoldLabel();
+
+            //add unseen labels to labelMap
+            if (!labelMap.keySet().contains(currentPredictionLabel)){
+                System.out.println(labels.length);
+                labels[labelsSeen] = currentPredictionLabel;
+                labelMap.put(currentPredictionLabel, labelsSeen++);
+            }
+
+            if (!labelMap.keySet().contains(currentGoldLabel)){
+                labels[labelsSeen] = currentGoldLabel;
+                labelMap.put(currentGoldLabel,labelsSeen++);
+            }
+
+            int predIndex = labelMap.get(currentPredictionLabel);
+            int goldIndex = labelMap.get(currentGoldLabel);
+
+            //incement cells in confusionMatrix
+            this.confusionMatrix[predIndex][goldIndex]++;
+            this.confusionMatrix[numOfLabels][goldIndex]++; //increment number of gold labels for currentGoldLabel
+            this.confusionMatrix[predIndex][numOfLabels]++; //increment number of predictions for currentPredictionLabel
+            this.confusionMatrix[numOfLabels][numOfLabels]++; //increment total amount of predictions
+        }
     }
 
     /**
