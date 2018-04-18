@@ -1,6 +1,6 @@
 package com.teamlab.ss18.ec.Helper;
 
-import com.teamlab.ss18.ec.DataPojo;
+import com.teamlab.ss18.ec.Tweet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,14 +19,14 @@ public class Utility {
             while(scanner.hasNext()){
                 String mystring = scanner.next();
                 String arr[] = mystring.split("\t| ", 2);
-                String firstWord = arr[0];
-                String theRest = arr[1];
-//                System.out.println(firstWord+"\nggggggggggggggggg\n"+theRest+"\n");
-                if (lm.containsKey(theRest)) {
-                    System.out.println("bug : "+theRest);
+                String label = arr[0];
+                String sentence = arr[1];
+//                System.out.println(label+"\nggggggggggggggggg\n"+sentence+"\n");
+                if (lm.containsKey(sentence)) {
+                    System.out.println("bug : "+sentence);
                 }
                 else {
-                    lm.put(theRest, firstWord);
+                    lm.put(sentence, label);
                 }
             }
             scanner.close();
@@ -38,8 +38,8 @@ public class Utility {
         }
         return lm;
     }
-    public static ArrayList<DataPojo> rawDataMapAsArrayList(String filepath) {
-        ArrayList<DataPojo> arrayList = null;
+    public static ArrayList<Tweet> rawDataMapAsArrayList(String filepath) {
+        ArrayList<Tweet> arrayList = null;
         try {
             arrayList = new ArrayList();
             Scanner scanner = new Scanner(new File(filepath));
@@ -47,10 +47,10 @@ public class Utility {
             while(scanner.hasNext()){
                 String mystring = scanner.next();
                 String arr[] = mystring.split("\t| ", 2);
-                String firstWord = arr[0];
-                String theRest = arr[1];
-//                System.out.println(firstWord+"\nggggggggggggggggg\n"+theRest+"\n");
-                DataPojo dummy = new DataPojo(firstWord,theRest);
+                String label = arr[0];
+                String sentence = arr[1];
+//                System.out.println(label+"\nggggggggggggggggg\n"+sentence+"\n");
+                Tweet dummy = new Tweet(sentence,label);
                 arrayList.add(dummy);
             }
             scanner.close();
