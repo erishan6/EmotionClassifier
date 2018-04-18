@@ -1,9 +1,13 @@
 package com.teamlab.ss18.ec;
 
+import java.util.UUID;
+
 public class Tweet {
+    private UUID id;
     private String goldLabel = "";
     private String predictedLabel = "";
     private String sentence = "";
+    //TODO: add featurevector
 
     /**
      * This class takes a sentence and a gold label (emotion word)
@@ -11,10 +15,12 @@ public class Tweet {
      * @param sentence
      */
     public Tweet(String sentence, String goldLabel) {
+        this.id = UUID.randomUUID();
         this.goldLabel = goldLabel;
         this.sentence = sentence;
     }
     public Tweet(String sentence) {
+        this.id = UUID.randomUUID();
         this.sentence = sentence;
     }
 
@@ -34,4 +40,21 @@ public class Tweet {
         return predictedLabel;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Tweet{" +
+                "id=" + id +
+                //", goldLabel='" + goldLabel + '\'' +
+                //", predictedLabel='" + predictedLabel + '\'' +
+                //", sentence='" + sentence + '\'' +
+                '}';
+    }
+
+    public void extractFeatures(){
+        //TODO: implement extractFeatures() method
+    }
 }
