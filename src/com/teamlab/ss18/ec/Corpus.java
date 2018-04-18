@@ -21,6 +21,7 @@ public class Corpus {
         tweets = createCorpus(this.filePath);
     }
 
+
     private LinkedHashMap createCorpus(String filePath) {
         //TODO: read file into hashMap (like in util)
         LinkedHashMap tweetMap = null;

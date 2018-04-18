@@ -1,7 +1,5 @@
 package com.teamlab.ss18.ec;
 
-import com.teamlab.ss18.ec.Helper.Utility;
-
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -15,7 +13,11 @@ public class Main {
 
         Corpus corpus = new Corpus("testCorpus", filepath);
 
-        
+        /*
+        Classifier.classify(corpus);
+
+        Evaluator.
+        */
 
 
     }

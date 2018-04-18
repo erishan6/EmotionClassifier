@@ -5,7 +5,7 @@ import java.util.UUID;
 public class Tweet {
     private UUID id;
     private String goldLabel = "";
-    private String predictedLabel = "";
+    private String predictedLabel = "joy"; //TODO: update for final version
     private String sentence = "";
     //TODO: add featurevector
 
