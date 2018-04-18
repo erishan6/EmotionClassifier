@@ -36,12 +36,8 @@ public class Corpus {
 
                 Tweet currentTweet = new Tweet(sentence,label);
 
-                if (tweetMap.containsKey(currentTweet.getId())) {
-                    System.out.println("bug : tweet duplicate: "+sentence);
-                }
-                else {
-                    tweetMap.put(currentTweet.getId(), currentTweet);
-                }
+                tweetMap.put(currentTweet.getId(), currentTweet);
+
             }
             scanner.close();
 
