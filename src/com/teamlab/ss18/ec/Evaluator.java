@@ -27,6 +27,7 @@ public class Evaluator {
 
     public Evaluator(Corpus corpus){
         System.out.println("Start Evaluation");
+        this.numOfLabels = corpus.getNumberOfLabels();
         this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
     }
@@ -63,6 +64,7 @@ public class Evaluator {
             int goldIndex = labelMap.get(currentGoldLabel);
 
             //incement cells in confusionMatrix
+            System.out.println(numOfLabels);
             this.confusionMatrix[predIndex][goldIndex]++;
             this.confusionMatrix[numOfLabels][goldIndex]++; //increment number of gold labels for currentGoldLabel
             this.confusionMatrix[predIndex][numOfLabels]++; //increment number of predictions for currentPredictionLabel
@@ -105,6 +107,40 @@ public class Evaluator {
             this.confusionMatrix[numOfLabels][numOfLabels]++; //increment total amount of predictions
         }
     }
+
+    public void printEvalResults() {
+
+        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+
+        for (String label : labels) {
+            System.out.println(label + " \tP = " + getPrecisionFor(label) + " R = " + getRecallFor(label) + " F-Score = " + getFScoreFor(label));
+        }
+        System.out.println("***************");
+        System.out.println("for corpus , P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+    }
+
+    public void printConfusionMatrix(){
+
+        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+
+        System.out.println("Confusion Matrix");
+
+        for (String label : labels) {
+            System.out.print("\t"+label+"\t");
+        }
+        System.out.println();
+
+        for (int i = 0; i < this.getConfusionMatrix().length; i++) {
+
+            double[] doubles = this.confusionMatrix[i];
+            for (double aDouble : doubles) {
+                System.out.print(aDouble+"\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
 
     /**
      * @return labels
