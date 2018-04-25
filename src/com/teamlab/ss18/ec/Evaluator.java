@@ -27,6 +27,7 @@ public class Evaluator {
     }
 
     public Evaluator(Corpus corpus){
+        this.numOfLabels = corpus.getNumberOfLabels();
         this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
     }
@@ -51,7 +52,6 @@ public class Evaluator {
 
             //add unseen labels to labelMap
             if (!labelMap.keySet().contains(currentPredictionLabel)){
-                System.out.println(labels.length);
                 labels[labelsSeen] = currentPredictionLabel;
                 labelMap.put(currentPredictionLabel, labelsSeen++);
             }
@@ -70,6 +70,8 @@ public class Evaluator {
             this.confusionMatrix[predIndex][numOfLabels]++; //increment number of predictions for currentPredictionLabel
             this.confusionMatrix[numOfLabels][numOfLabels]++; //increment total amount of predictions
         }
+
+
     }
 
     /**
@@ -107,6 +109,41 @@ public class Evaluator {
             this.confusionMatrix[numOfLabels][numOfLabels]++; //increment total amount of predictions
         }
     }
+
+
+    public void printEvalResults() {
+
+        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+
+        for (String label : labels) {
+            System.out.println(label + " \tP = " + getPrecisionFor(label) + " R = " + getRecallFor(label) + " F-Score = " + getFScoreFor(label));
+        }
+        System.out.println("***************");
+        System.out.println("for corpus , P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+    }
+
+    public void printConfusionMatrix(){
+
+        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+
+        System.out.println("Confusion Matrix");
+
+        for (String label : labels) {
+            System.out.print("\t"+label+"\t");
+        }
+        System.out.println();
+
+        for (int i = 0; i < this.getConfusionMatrix().length; i++) {
+
+            double[] doubles = this.confusionMatrix[i];
+            for (double aDouble : doubles) {
+                System.out.print(aDouble+"\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
 
     /**
      * @return labels
@@ -198,17 +235,5 @@ public class Evaluator {
         return sum/this.getLabels().length;
     }
 
-    public void printEvalResults() {
-
-        String[] labels = {"joy", "surprise","sad", "fear","anger", "disgust"};
-
-        for (String label : labels) {
-            System.out.println(label+" \tP = " +getPrecisionFor(label)+" R = " +getRecallFor(label)+" F-Score = " +getFScoreFor(label));
-        }
-        System.out.println("***************");
-        System.out.println("for corpus , P = "+getPrecisionAverage()+" R = "+getRecallAverage()+ "  F-Score = "+getFScoreAverage());
-
-
-    }
 
 }

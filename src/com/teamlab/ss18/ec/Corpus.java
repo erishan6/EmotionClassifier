@@ -52,7 +52,7 @@ public class Corpus {
             }
             scanner.close();
             scanner2.close();
-            System.out.println(tweetMap.size());
+            //System.out.println("Corpus size: "+tweetMap.size());
         }
         catch (FileNotFoundException filenotfound) {
             filenotfound.printStackTrace();
