@@ -40,7 +40,7 @@ public class Perceptron {
 
 
             if (y_gold == y_pred){
-                W[y_gold] = ArrayMath.add(W[y_gold], x);
+                //W[y_gold] = ArrayMath.add(W[y_gold], x);
             } else{
                 //System.out.println("W_length: "+W.length);
                 //System.out.println(y_gold);
@@ -118,8 +118,7 @@ public class Perceptron {
         for (UUID id : corpus.getTweets().keySet()) {
             Tweet currentTweet = tweets.get(id);
             int[] x = currentTweet.getFeatures();
-            Label goldLabel = currentTweet.getGoldLabel();
-            int y_gold = goldLabel.getLabelInt();
+
 
             int[] dotResults = new int[corpus.getNumberOfLabels()];
 
