@@ -26,6 +26,7 @@ public class Evaluator {
     }
 
     public Evaluator(Corpus corpus){
+        System.out.println("Start Evaluation");
         this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
     }
@@ -44,13 +45,11 @@ public class Evaluator {
         for (UUID id : corpus.getTweets().keySet()) {
             Tweet currentTweet = corpus.getTweets().get(id);
 
-
-            String currentPredictionLabel = currentTweet.getPredictedLabel();
-            String currentGoldLabel = currentTweet.getGoldLabel();
+            String currentPredictionLabel = currentTweet.getPredictedLabel().getLabelString();
+            String currentGoldLabel = currentTweet.getGoldLabel().getLabelString();
 
             //add unseen labels to labelMap
-            if (!labelMap.keySet().contains(currentPredictionLabel)){
-                System.out.println(labels.length);
+            if (!currentPredictionLabel.equals("") &&!labelMap.keySet().contains(currentPredictionLabel)){
                 labels[labelsSeen] = currentPredictionLabel;
                 labelMap.put(currentPredictionLabel, labelsSeen++);
             }

@@ -46,13 +46,13 @@ public class Corpus {
                 String sentence = arr[1];
                 String goldLabel = scanner2.next();
                 Tweet currentTweet = new Tweet(sentence, goldLabel);
-                currentTweet.setPredictedLabel(label);
+                //currentTweet.setPredictedLabel(label);
                 tweetMap.put(currentTweet.getId(), currentTweet);
 
             }
             scanner.close();
             scanner2.close();
-            System.out.println(tweetMap.size());
+            System.out.println("Number of training samples: " + tweetMap.size());
         }
         catch (FileNotFoundException filenotfound) {
             filenotfound.printStackTrace();
