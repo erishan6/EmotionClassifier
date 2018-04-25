@@ -12,9 +12,10 @@ public class Main {
         Corpus corpus = new Corpus("testCorpus", filepath, 6, goldPath);
 
         Evaluator evaluator = new Evaluator(corpus);
-        System.out.println(evaluator.getRecallAverage());
-        System.out.println(evaluator.getPrecisionAverage());
-        System.out.println(evaluator.getFScoreAverage());
+        evaluator.printEvalResults();
+//        System.out.println(evaluator.getRecallAverage());
+//        System.out.println(evaluator.getPrecisionAverage());
+//        System.out.println(evaluator.getFScoreAverage());
         /*
         Classifier.classify(corpus);
 

@@ -2,6 +2,7 @@ package com.teamlab.ss18.ec;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -196,4 +197,18 @@ public class Evaluator {
         }
         return sum/this.getLabels().length;
     }
+
+    public void printEvalResults() {
+
+        String[] labels = {"joy", "surprise","sad", "fear","anger", "disgust"};
+
+        for (String label : labels) {
+            System.out.println(label+" \tP = " +getPrecisionFor(label)+" R = " +getRecallFor(label)+" F-Score = " +getFScoreFor(label));
+        }
+        System.out.println("***************");
+        System.out.println("for corpus , P = "+getPrecisionAverage()+" R = "+getRecallAverage()+ "  F-Score = "+getFScoreAverage());
+
+
+    }
+
 }
