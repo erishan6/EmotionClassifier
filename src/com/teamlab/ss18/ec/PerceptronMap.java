@@ -11,30 +11,50 @@ public class PerceptronMap {
     public PerceptronMap(){
     }
 
-    public void fit(Corpus corpus, int epochs, boolean shuffle, int verbose){
+    /**
+     * trains the model on corpus for given epochs.
+     * If shuffle is true the data will be shuffled before each epoch.
+     * If verbose is greater 0 average precision, recall and fscore will be printed.
+     * @param corpus A HashMap with Tweets as values and UUIDs as key
+     * @param epochs number of training epochs
+     * @param shuffle true for shuffle after each epoch
+     * @param verbose
+     * @param printEveryNthEpoch if verbose is bigger 0, evaluation is printed every nth epoch
+     */
+    public void fit(Corpus corpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
         W = new HashMap<>();
-        for (int epoch = 0; epoch < epochs; epoch++) {
+        for (int epoch = 1; epoch <= epochs; epoch++) {
             ArrayList<String[]> results = train(corpus, shuffle);
 
 
             Evaluator evaluator = new Evaluator(results.get(0), results.get(1), corpus.getNumberOfLabels());
 
-            if (epoch % 10 == 0){
+            if (printEveryNthEpoch > 0 && (epoch % printEveryNthEpoch == 0 || epoch == epochs)){
                 System.out.println("Epoch "+epoch);
-                if (verbose>0){
-                    System.out.println("\tPrecision: "+evaluator.getPrecisionAverage());
-                    System.out.println("\tRecall: "+evaluator.getRecallAverage());
-                    System.out.println("\tFscore: "+evaluator.getFScoreAverage());
+                if (verbose > 1)
+                    evaluator.printConfusionMatrix();
+                if (verbose > 0){
+                    System.out.println("\tTrain Precision: "+evaluator.getPrecisionAverage());
+                    System.out.println("\tTrain Recall: "+evaluator.getRecallAverage());
+                    System.out.println("\tTrain Fscore: "+evaluator.getFScoreAverage());
                 }
+
+
+                System.out.println("-----------------");
             }
 
         }
     }
 
+    /**
+     * trains the model for one epoch and updates the weightMatrix
+     * @param corpus A HashMap with Tweets as values and UUIDs as key
+     * @param shuffle true for shuffle after each epoch
+     * @return return a list of String arrays. first array is an array of predicted labels. Second array is an array of gold labels.
+     */
     private ArrayList<String[]> train(Corpus corpus, boolean shuffle){
         String[] predictions = new String[corpus.size()]; //used for after-epoch evaluation
-        String[] golds = new String[corpus.size()];
-
+        String[] golds = new String[corpus.size()]; //used for after-epoch evaluation
 
         ArrayList<UUID> ids = new ArrayList<>();
         ids.addAll(corpus.getTweets().keySet());
@@ -51,22 +71,16 @@ public class PerceptronMap {
             for (Integer classIndex : Label.getLabelsMapInt().keySet()) {
 
                 ArrayList<String> currentFeatureVector = currentTweet.getFeatures();
-
                 for (String feature : currentFeatureVector) {
-
                     HashMap<String, Integer> classWeights = W.get(classIndex);
 
                     if (classWeights == null){ //class has not been seen yet
-                        HashMap<String, Integer> newClassWeights = new HashMap<>();
-                        newClassWeights.put(feature,0); //Init weight to zero for feature
-                        W.put(classIndex, newClassWeights);
+
+                        W.put(classIndex, new HashMap<String, Integer>());
                         continue;
                     }
                     if (classWeights.keySet().contains(feature)){
                         dotResults[classIndex] += classWeights.get(feature); //add featureWeight to class
-                    }
-                    else{
-                        classWeights.put(feature,0); //If feature is not in weightVector for this class, then add and init with zero
                     }
                 }
             }
@@ -76,18 +90,59 @@ public class PerceptronMap {
 
             predictions[samplesSeen] = Label.getLabelsMapInt().get(predictedClass);
             golds[samplesSeen] = Label.getLabelsMapInt().get(goldClass);
+            samplesSeen++;
 
-            // UPDATE WIEGHTS
+            // UPDATE WEIGHTS
             if (predictedClass != goldClass){
                 for (String feature : currentTweet.getFeatures()) {
-                    int oldWeightPredicted = W.get(predictedClass).get(feature);
-                    W.get(predictedClass).put(feature, oldWeightPredicted - 1 ); //decrement feature weight for predcitedClass
 
-                    int oldWeightGold = W.get(goldClass).get(feature);
-                    W.get(goldClass).put(feature, oldWeightGold + 1 ); //increment feature weight for goldClass
+                    //UPDATE weights of predicted class
+                    Integer oldWeightPredicted = W.get(predictedClass).get(feature);
+                    if (oldWeightPredicted == null)
+                        W.get(predictedClass).put(feature, -1 ); //set weight to 0-1
+                    else{
+                        int newWeight = oldWeightPredicted - 1;
+
+                        if (newWeight == 0)
+                            W.get(predictedClass).remove(feature); //remove features with zero weight
+                        else
+                            W.get(predictedClass).put(feature, newWeight); //decrement feature weight for predcitedClass
+                    }
+                    //UPDATE weights of gold class
+                    Integer oldWeightGold = W.get(goldClass).get(feature);
+                    if (oldWeightGold == null)
+                        W.get(goldClass).put(feature, 1 ); //set weight to 0+1
+                    else{
+                        int newWeight = oldWeightGold + 1;
+
+                        if (newWeight == 0)
+                            W.get(goldClass).remove(feature);//remove features with zero weight
+                        else
+                            W.get(goldClass).put(feature, newWeight); //increment feature weight for goldClass
+                    }
                 }
             }
-            samplesSeen++;
+
+            /*
+            System.out.println("-------------");
+            System.out.println(currentTweet.getGoldLabel().getLabelString()+ ": "+currentTweet.getSentence());
+            System.out.println("pred: "+Label.getLabelsMapInt().get(predictedClass));
+
+            System.out.println();
+            System.out.println("Gold WeightVec: "+currentTweet.getGoldLabel().getLabelString());
+            for (String feature : W.get(goldClass).keySet()) {
+
+                System.out.print(W.get(goldClass).get(feature)+": ");
+                System.out.println(feature);
+            }
+            System.out.println();
+            System.out.println("Predicted WeightVec: "+Label.getLabelsMapInt().get(predictedClass));
+            for (String feature : W.get(predictedClass).keySet()) {
+                System.out.print(W.get(predictedClass).get(feature)+": ");
+                System.out.println(feature);
+            }
+            */
+
         }
 
         ArrayList<String[]> predictionsAndGolds = new ArrayList<>();
@@ -95,11 +150,13 @@ public class PerceptronMap {
         predictionsAndGolds.add(golds);
 
         return predictionsAndGolds;
-        //TODO: add epochs
-        //TODO: shuffle input data before every epoch
-
     }
 
+    /**
+     * predicts classes for each tweet in corpus based on trained models
+     * @param corpus A HashMap with Tweets as values and UUIDs as key
+     * @return
+     */
     public Corpus predict(Corpus corpus){
 
         LinkedHashMap<UUID, Tweet> tweets = corpus.getTweets();

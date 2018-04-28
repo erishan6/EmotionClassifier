@@ -12,15 +12,8 @@ import java.util.HashMap;
  */
 public class Scribble_Deniz {
     public static void main(String[] args) {
-        HashMap<String, Integer> map = new HashMap<>();
-        int count = 0;
-
-        map.put("zero",++count);
-        map.put("one", ++count);
-
-        for (String key : map.keySet()) {
-            int val = map.get(key);
-            System.out.println(key+": "+val);
-        }
+        int a = 8;
+        int b = -8;
+        System.out.println(a%b);
     }
 }

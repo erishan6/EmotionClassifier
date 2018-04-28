@@ -15,14 +15,18 @@ public class Main {
 
         //Perceptron perceptron = new Perceptron();
         PerceptronMap perceptron = new PerceptronMap();
-        perceptron.fit(corpus,100, true, 1);
+        perceptron.fit(corpus,100, false, 2, 10);
         perceptron.predict(corpus);
+
 
         ArrayList<Tweet> a = new ArrayList<>();
         a.addAll(corpus.getTweets().values());
 
+        System.out.println("Evaluation on testset:");
         Evaluator evaluator = new Evaluator(corpus);
+
         evaluator.printConfusionMatrix();
+        System.out.println();
         evaluator.printEvalResults();
 
         //iter through corpus

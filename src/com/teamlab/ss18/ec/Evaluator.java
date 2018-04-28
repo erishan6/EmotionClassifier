@@ -2,6 +2,7 @@ package com.teamlab.ss18.ec;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -106,34 +107,27 @@ public class Evaluator {
 
     public void printEvalResults() {
 
-        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+        //Label.getLabelsMap()
+        //String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+        ArrayList<String> labels = new ArrayList<>();
+        labels.addAll(Label.getLabelsMap().keySet());
 
         for (String label : labels) {
             System.out.println(label + " \tP = " + getPrecisionFor(label) + " R = " + getRecallFor(label) + " F-Score = " + getFScoreFor(label));
         }
         System.out.println("***************");
-        System.out.println("for corpus , P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+        System.out.println("Average: P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
     }
 
     public void printConfusionMatrix(){
 
-        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+        //String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
 
-        System.out.println("Confusion Matrix");
-
-        for (String label : labels) {
-            System.out.print("\t"+label+"\t");
-        }
+        ArrayList<String> labels = new ArrayList<>();
+        labels.addAll(Label.getLabelsMap().keySet());
         System.out.println();
-
-        for (int i = 0; i < this.getConfusionMatrix().length; i++) {
-
-            double[] doubles = this.confusionMatrix[i];
-            for (double aDouble : doubles) {
-                System.out.print(aDouble+"\t");
-            }
-            System.out.println();
-        }
+        System.out.println("\tConfusion Matrix:");
+        ArrayMath.printArrayAsAligned(labels, this.confusionMatrix);
         System.out.println();
     }
 
