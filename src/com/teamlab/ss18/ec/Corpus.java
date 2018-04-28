@@ -30,6 +30,10 @@ public class Corpus {
         return tweets;
     }
 
+    public int size(){
+        return tweets.size();
+    }
+
     private LinkedHashMap createCorpus(String filePath, String goldPath) {
         //TODO: read file into hashMap (like in util)
         LinkedHashMap tweetMap = null;

@@ -25,7 +25,8 @@ public class Perceptron {
 
         for (UUID id : tweets.keySet()) {
             Tweet currentTweet = tweets.get(id);
-            int[] x = currentTweet.getFeatures();
+            //int[] x = currentTweet.getFeatures();
+            int[] x = {};
             Label goldLabel = currentTweet.getGoldLabel();
             int y_gold = goldLabel.getLabelInt();
 
@@ -117,8 +118,8 @@ public class Perceptron {
 
         for (UUID id : corpus.getTweets().keySet()) {
             Tweet currentTweet = tweets.get(id);
-            int[] x = currentTweet.getFeatures();
-
+            //int[] x = currentTweet.getFeatures();
+            int[] x = {};
 
             int[] dotResults = new int[corpus.getNumberOfLabels()];
 

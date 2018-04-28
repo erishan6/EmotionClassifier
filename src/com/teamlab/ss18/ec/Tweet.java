@@ -1,5 +1,6 @@
 package com.teamlab.ss18.ec;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Tweet {
@@ -7,7 +8,7 @@ public class Tweet {
     private Label goldLabel = null;
     private Label predictedLabel = null; //TODO: update for final version
     private String sentence = "";
-    private int[] features;
+    private ArrayList<String> features;
 
     /**
      * This class takes a sentence and a gold label (emotion word)
@@ -48,7 +49,7 @@ public class Tweet {
         return id;
     }
 
-    public int[] getFeatures() {
+    public ArrayList<String> getFeatures() {
         return features;
     }
 
@@ -65,20 +66,11 @@ public class Tweet {
     public void extractFeatures(){
         //TODO: implement extractFeatures() method
 
-        /*
-        tmp random generation
-         */
-        int gold = getGoldLabel().getLabelInt();
+        this.features = new ArrayList<>();
+        String[] splitTweet = this.sentence.split(" ");
 
-        int[] featureVector = new int[10];
-
-        for (int i = 0; i < featureVector.length; i++) {
-            if (gold == 0)
-                gold = 7;
-            if (i%gold == 0)
-                featureVector[i] = 1;
+        for (String token : splitTweet) {
+            this.features.add("w="+token);
         }
-
-        this.features = featureVector;
     }
 }

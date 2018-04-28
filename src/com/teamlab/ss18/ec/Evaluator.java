@@ -20,13 +20,10 @@ public class Evaluator {
     public Evaluator(String[] yPred, String[] yGold, int numOfLabels){
         this.numOfLabels = numOfLabels;
         this.labels = new String[numOfLabels];
-
-
         fillMatrix(yPred, yGold);
     }
 
     public Evaluator(Corpus corpus){
-        System.out.println("Start Evaluation");
         this.numOfLabels = corpus.getNumberOfLabels();
         this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
@@ -64,7 +61,6 @@ public class Evaluator {
             int goldIndex = labelMap.get(currentGoldLabel);
 
             //incement cells in confusionMatrix
-            System.out.println(numOfLabels);
             this.confusionMatrix[predIndex][goldIndex]++;
             this.confusionMatrix[numOfLabels][goldIndex]++; //increment number of gold labels for currentGoldLabel
             this.confusionMatrix[predIndex][numOfLabels]++; //increment number of predictions for currentPredictionLabel
