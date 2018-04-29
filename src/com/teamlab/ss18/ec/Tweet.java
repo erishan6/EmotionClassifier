@@ -1,13 +1,14 @@
 package com.teamlab.ss18.ec;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Tweet {
     private UUID id;
-    private String goldLabel = "";
-    private String predictedLabel = "joy"; //TODO: update for final version
+    private Label goldLabel = null;
+    private Label predictedLabel = null; //TODO: update for final version
     private String sentence = "";
-    //TODO: add featurevector
+    private ArrayList<String> features;
 
     /**
      * This class takes a sentence and a gold label (emotion word)
@@ -16,15 +17,17 @@ public class Tweet {
      */
     public Tweet(String sentence, String goldLabel) {
         this.id = UUID.randomUUID();
-        this.goldLabel = goldLabel;
+        this.goldLabel = new Label(goldLabel);
         this.sentence = sentence;
+        extractFeatures();
     }
     public Tweet(String sentence) {
         this.id = UUID.randomUUID();
         this.sentence = sentence;
+        extractFeatures();
     }
 
-    public String getGoldLabel() {
+    public Label getGoldLabel() {
         return goldLabel;
     }
 
@@ -33,15 +36,21 @@ public class Tweet {
     }
 
     public void setPredictedLabel(String predictedLabel) {
-        this.predictedLabel = predictedLabel;
+        this.predictedLabel = new Label(predictedLabel);
     }
 
-    public String getPredictedLabel() {
+    public Label getPredictedLabel() {
+        if (predictedLabel == null)
+            return new Label();
         return predictedLabel;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public ArrayList<String> getFeatures() {
+        return features;
     }
 
     @Override
@@ -56,5 +65,26 @@ public class Tweet {
 
     public void extractFeatures(){
         //TODO: implement extractFeatures() method
+        /*
+        TODO: other possible features: top k most frequent words
+        no stopwords
+        adjective valency
+        emojis
+        punctuation (??!)
+        other users mentioned?
+        link?
+        hashTags?
+        etc
+
+
+         */
+        this.features = new ArrayList<>();
+        String[] splitTweet = this.sentence.split(" ");
+
+        for (String token : splitTweet) {
+            String newFeature = "w="+token;
+            if ( ! this.features.contains(newFeature))
+                this.features.add(newFeature);
+        }
     }
 }
