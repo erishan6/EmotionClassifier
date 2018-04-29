@@ -3,6 +3,7 @@ package com.teamlab.ss18.ec;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 public class Main {
@@ -43,5 +44,12 @@ public class Main {
         evaluator.printConfusionMatrix();
         System.out.println();
         evaluator.printEvalResults();
+
+        String filepath2 = "data/train.csv";
+        Corpus trainCorpus2 = new Corpus("trainCorpus", filepath2, 6);
+        System.out.println(trainCorpus2.wordsList().get("\uD83D\uDE0B"));
+//        trainCorpus.printWordEmotionCount();
+        System.out.println(trainCorpus2.getVocabularySize()*0.01);
+
     }
 }
