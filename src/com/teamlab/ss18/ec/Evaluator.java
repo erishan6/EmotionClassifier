@@ -21,7 +21,6 @@ public class Evaluator {
 
     public Evaluator(Corpus corpus){
         this.numOfLabels = corpus.getNumberOfLabels();
-        this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
     }
 
