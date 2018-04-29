@@ -24,13 +24,18 @@ public class PerceptronMap {
     public void fit(Corpus corpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
         W = new HashMap<>();
         for (int epoch = 1; epoch <= epochs; epoch++) {
+
+            long startTime = System.currentTimeMillis();
+
             ArrayList<String[]> results = train(corpus, shuffle);
+            long endTime = System.currentTimeMillis();
+            long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
 
             Evaluator evaluator = new Evaluator(results.get(0), results.get(1), corpus.getNumberOfLabels());
 
-            if (printEveryNthEpoch > 0 && (epoch % printEveryNthEpoch == 0 || epoch == epochs)){
-                System.out.println("Epoch "+epoch);
+            if (printEveryNthEpoch > 0 && (epoch % printEveryNthEpoch == 0 || epoch == epochs || epoch == 1)){
+                System.out.println("Epoch "+epoch + " ("+duration+"ms)");
                 if (verbose > 1)
                     evaluator.printConfusionMatrix();
                 if (verbose > 0){
@@ -39,7 +44,7 @@ public class PerceptronMap {
                     System.out.println("\tTrain Fscore: "+evaluator.getFScoreAverage());
                 }
 
-
+                System.out.println();
                 System.out.println("-----------------");
             }
 
@@ -122,27 +127,6 @@ public class PerceptronMap {
                     }
                 }
             }
-
-            /*
-            System.out.println("-------------");
-            System.out.println(currentTweet.getGoldLabel().getLabelString()+ ": "+currentTweet.getSentence());
-            System.out.println("pred: "+Label.getLabelsMapInt().get(predictedClass));
-
-            System.out.println();
-            System.out.println("Gold WeightVec: "+currentTweet.getGoldLabel().getLabelString());
-            for (String feature : W.get(goldClass).keySet()) {
-
-                System.out.print(W.get(goldClass).get(feature)+": ");
-                System.out.println(feature);
-            }
-            System.out.println();
-            System.out.println("Predicted WeightVec: "+Label.getLabelsMapInt().get(predictedClass));
-            for (String feature : W.get(predictedClass).keySet()) {
-                System.out.print(W.get(predictedClass).get(feature)+": ");
-                System.out.println(feature);
-            }
-            */
-
         }
 
         ArrayList<String[]> predictionsAndGolds = new ArrayList<>();

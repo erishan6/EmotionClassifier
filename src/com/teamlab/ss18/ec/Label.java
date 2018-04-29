@@ -13,12 +13,12 @@ public class Label {
     private static final Map<String, Integer> LABELS_MAP;
     static{
         TreeMap<String, Integer> otherMap = new TreeMap<String, Integer>();
-        otherMap.put( "joy", 0);
-        otherMap.put( "surprise", 1);
-        otherMap.put( "sad", 2);
-        otherMap.put( "fear", 3);
-        otherMap.put( "anger", 4);
-        otherMap.put( "disgust", 5);
+        otherMap.put( "anger", 0);
+        otherMap.put( "disgust", 1);
+        otherMap.put( "fear", 2);
+        otherMap.put( "joy", 3);
+        otherMap.put( "sad", 4);
+        otherMap.put( "surprise", 5);
         LABELS_MAP = Collections.unmodifiableMap( otherMap );
     }
     private static final Map<Integer,String> LABELS_MAP_INT;

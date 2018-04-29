@@ -26,7 +26,7 @@ public class EvaluatorTest {
 
         */
 
-        for (String label : testEvaluator.getLabels()) {
+        for (String label : Label.getLabelsMap().keySet()) {
             System.out.println("label: '"+label+"'");
             System.out.println("\tprecision: "+testEvaluator.getPrecisionFor(label));
             System.out.println("\trecall: "+testEvaluator.getRecallFor(label));
