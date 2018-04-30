@@ -3,6 +3,7 @@ package com.teamlab.ss18.ec;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by deniz on 19.04.18.
@@ -11,18 +12,18 @@ public class Label {
 
     private static final Map<String, Integer> LABELS_MAP;
     static{
-        Map<String, Integer> otherMap = new HashMap<String, Integer>();
-        otherMap.put( "joy", 0);
-        otherMap.put( "surprise", 1);
-        otherMap.put( "sad", 2);
-        otherMap.put( "fear", 3);
-        otherMap.put( "anger", 4);
-        otherMap.put( "disgust", 5);
+        TreeMap<String, Integer> otherMap = new TreeMap<String, Integer>();
+        otherMap.put( "anger", 0);
+        otherMap.put( "disgust", 1);
+        otherMap.put( "fear", 2);
+        otherMap.put( "joy", 3);
+        otherMap.put( "sad", 4);
+        otherMap.put( "surprise", 5);
         LABELS_MAP = Collections.unmodifiableMap( otherMap );
     }
     private static final Map<Integer,String> LABELS_MAP_INT;
     static {
-        Map<Integer, String> otherMap = new HashMap<Integer, String>();
+        TreeMap<Integer, String> otherMap = new TreeMap<Integer, String>();
         for (String key : LABELS_MAP.keySet()) {
             otherMap.put(LABELS_MAP.get(key), key);
         }

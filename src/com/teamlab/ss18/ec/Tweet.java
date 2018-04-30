@@ -35,6 +35,10 @@ public class Tweet {
         return sentence;
     }
 
+    public void setPredictedLabel(Label predictedLabel) {
+        this.predictedLabel = predictedLabel;
+    }
+
     public void setPredictedLabel(String predictedLabel) {
         this.predictedLabel = new Label(predictedLabel);
     }
@@ -65,12 +69,27 @@ public class Tweet {
 
     public void extractFeatures(){
         //TODO: implement extractFeatures() method
+        /*
+        TODO: other possible features: top k most frequent words
+        no stopwords
+        adjective valency
+        emojis
+        punctuation (??!)
+        other users mentioned?
+        link?
+        hashTags?
+        etc
 
+
+         */
         this.features = new ArrayList<>();
         String[] splitTweet = this.sentence.split(" ");
 
         for (String token : splitTweet) {
-            this.features.add("w="+token);
+            String newFeature = "w="+token;
+            if ( ! this.features.contains(newFeature))
+                this.features.add(newFeature);
         }
     }
+
 }

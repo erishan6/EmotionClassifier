@@ -1,5 +1,8 @@
 package com.teamlab.ss18.ec;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by deniz on 19.04.18.
  */
@@ -67,39 +70,89 @@ public class ArrayMath {
         return maxIndex;
     }
 
+    public static int argmax(double[] vector) {
+        int maxIndex = -1;
+        double max = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < vector.length; i++) {
+            double value = vector[i];
+            if (value > max) {
+                max = value;
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    public static void printArrayAsAligned(ArrayList<String> headers, double[][] matrix){
+        int longestString = 0;
+        for (String header : headers) {
+            int length = header.length();
+            if (longestString<length)
+                longestString = length;
+        }
+
+        for (double[] ints : matrix) {
+            for (double i : ints) {
+
+                int length = Integer.toString((int)i).length();
+                if (longestString<length)
+                    longestString = length;
+            }
+        }
+
+
+        System.out.print("\tP\\G"+new String(new char[longestString-1]).replace('\0', ' '));
+        for (String header : headers) {
+            int stringLength = header.length();
+            int padding = longestString - stringLength + 2;
+            String space = new String(new char[padding]).replace('\0', ' ');
+
+            System.out.print(header + space);
+        }
+        System.out.println();
+
+        for (int row = 0; row < matrix.length; row++) {
+
+            String header = null;
+            try {
+                header = headers.get(row);
+            } catch (IndexOutOfBoundsException e) {
+                header = new String(new char[longestString+2]).replace('\0', ' ');
+            }
+            System.out.print("\t"+header + new String(new char[longestString-header.length()+2]).replace('\0', ' '));
+            double[] ints = matrix[row];
+
+            for (double i : ints) {
+                String iString = Integer.toString((int)i);
+                int stringLength = iString.length();
+
+                int padding = longestString - stringLength + 2;
+
+                String space = new String(new char[padding]).replace('\0', ' ');
+
+                    System.out.print(iString + space);
+            }
+            System.out.println();
+
+        }
+
+
+    }
+
 
 
 
     public static void main(String[] args) {
         int[] a = {1,2,3,4};
         int[] b = {4,3,2,1};
+        int[][] matrix = {a,b};
 
-        int d = dot(a,b);
-        System.out.println(d);
+        ArrayList<String> headers = new ArrayList<>();
+        String[] tmp = {"a","b","c","d"};
+        headers.addAll(Arrays.asList(tmp));
 
-        System.out.println(argmax(a));
-        System.out.println(argmax(b));
-
-
-        int[] longArr = new int[5000000];
-        int[] otherLongArr = new int[5000000];
-        for (int i = 0; i < 5000000; i++) {
-            int val = (int) Math.round(Math.random());
-            longArr[i] = val;
-            val = (int) Math.round(Math.random());
-            otherLongArr[i] = val;
-        }
-
-        System.out.println();
-
-        int[] add = add(a,b);
-        int[] sub = subtract(a,b);
-        for (int i : add) {
-            System.out.println(i);
-        }
-        System.out.println();
-        for (int i : sub) {
-            System.out.println(i);
+        for (String header : headers) {
+            System.out.println(header);
         }
 
 
