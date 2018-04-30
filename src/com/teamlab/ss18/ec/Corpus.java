@@ -3,7 +3,10 @@ package com.teamlab.ss18.ec;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
+import java.util.UUID;
 
 /**
  * Created by deniz on 18.04.18.
@@ -129,6 +132,7 @@ public class Corpus {
 //                System.out.println();
                 fs.print("\n");
             }
+            fs.close();
         }
         catch (Exception e) {
             e.printStackTrace();
