@@ -85,7 +85,7 @@ public class Corpus {
                 }
             }
         }
-        System.out.println("Corpus size " + corpusWordsList.size());
+//        System.out.println("Corpus size " + corpusWordsList.size());
 
         return corpusWordsList;
     }

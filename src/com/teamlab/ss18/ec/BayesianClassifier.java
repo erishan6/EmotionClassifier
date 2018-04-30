@@ -6,14 +6,20 @@ public class BayesianClassifier {
     private Corpus trainingCorpus;
     private HashMap<String, Integer> labelCount = new HashMap<>();
     private HashMap<String, Double> labelProb = new HashMap<>();
+    private HashMap<String, HashMap<String, Integer>> wordsEmotionMap;
     private Integer vocabTrainingCorpus;
     private Integer emotionCountTotal;
 
     public BayesianClassifier(Corpus trainingCorpus) {
         this.trainingCorpus = trainingCorpus;
-        this.vocabTrainingCorpus = trainingCorpus.getVocabularySize();
+        initParams();
     }
 
+    private void initParams() {
+        this.vocabTrainingCorpus = trainingCorpus.getVocabularySize();
+        this.wordsEmotionMap = trainingCorpus.wordEmotionCount();
+
+    }
     /*
      * calculate count for prior prob of each label and store in hashmap
      */
@@ -33,12 +39,11 @@ public class BayesianClassifier {
      * calculate probability of word given emotion
      */
     private double wordProbGivenEmotion(String word, String emotion) {
-        Long stime = System.currentTimeMillis();
         int totalOccurences = vocabTrainingCorpus;
         double emotionCount = vocabTrainingCorpus * 0.0001;
-        if (trainingCorpus.wordEmotionCount().containsKey(word)) {
+        if (wordsEmotionMap.containsKey(word)) {
 //            System.out.println("word found in corpus");
-            HashMap<String, Integer> emotionMap = trainingCorpus.wordEmotionCount().get(word);
+            HashMap<String, Integer> emotionMap = wordsEmotionMap.get(word);
             for (String currEmotion : emotionMap.keySet()) {
                 totalOccurences += emotionMap.get(currEmotion);
                 if (currEmotion.equals(emotion)) {
@@ -48,9 +53,6 @@ public class BayesianClassifier {
         } else {
 //            System.out.println("word is not present in corpus");
         }
-        Long etime = System.currentTimeMillis();
-        System.out.println(word + "  time2 " + (etime - stime));
-        stime = etime;
         return Math.log(emotionCount / totalOccurences);
     }
 
@@ -71,17 +73,17 @@ public class BayesianClassifier {
      * Label index to label mapping
      */
     public Label predictLabel_BayesianClassifier(String text) {
-        Long stime = System.currentTimeMillis();
+//        Long stime = System.currentTimeMillis();
         calculateLabelProb();
-        Long etime = System.currentTimeMillis();
-        System.out.println("time " + (etime - stime));
-        stime = etime;
+//        Long etime = System.currentTimeMillis();
+//        System.out.println("time " + (etime - stime));
+//        stime = etime;
         double[] finalLabelProb = new double[labelProb.size()];
         int index = 0;
         double max = Double.NEGATIVE_INFINITY;
         String predictedLabel = "";
         for (String currEmotion : labelProb.keySet()) {
-            System.out.println(currEmotion);
+//            System.out.println(currEmotion);
             double currEmotionProb = labelProb.get(currEmotion);
             //TODO update regex precedence for appropraite results
             String regex = "\\W*(\\@USERNAME)|\\W*(\\[#TRIGGERWORD#])|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\"";
@@ -99,9 +101,9 @@ public class BayesianClassifier {
 //            System.out.println(currEmotionProb);
             index++;
         }
-        etime = System.currentTimeMillis();
-        System.out.println("time2 " + (etime - stime));
-        stime = etime;
+//        etime = System.currentTimeMillis();
+//        System.out.println("time2 " + (etime - stime));
+//        stime = etime;
         int pred = ArrayMath.argmax(finalLabelProb);
         System.out.println(pred + " " + predictedLabel);
         return new Label(predictedLabel);
