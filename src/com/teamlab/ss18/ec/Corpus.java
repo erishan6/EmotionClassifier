@@ -37,7 +37,6 @@ public class Corpus {
     }
 
     private LinkedHashMap createCorpus(String filePath) {
-        //TODO: read file into hashMap (like in util)
         LinkedHashMap tweetMap = null;
         try {
             tweetMap = new LinkedHashMap();
@@ -100,7 +99,6 @@ public class Corpus {
                 HashMap<String, Integer> emotionCount;
                 if (wordEmotionCount.containsKey(word)) {
                     emotionCount = wordEmotionCount.get(word);
-//                    TODO : Update tweet class to take properly so that it takes only label for Hashmap values
                     if (emotionCount.containsKey(label)) {
                         int count  = emotionCount.get(label);
                         emotionCount.put(label,count+1);
@@ -147,5 +145,6 @@ public class Corpus {
     public int getVocabularySize() {
         return wordsList().size();
     }
+
 }
 

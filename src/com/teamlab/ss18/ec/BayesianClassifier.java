@@ -72,12 +72,7 @@ public class BayesianClassifier {
      * Predicts the label for text data ie sentence
      * Label index to label mapping
      */
-    public Label predictLabel_BayesianClassifier(String text) {
-//        Long stime = System.currentTimeMillis();
-        calculateLabelProb();
-//        Long etime = System.currentTimeMillis();
-//        System.out.println("time " + (etime - stime));
-//        stime = etime;
+    private Label predictLabel(String text) {
         double[] finalLabelProb = new double[labelProb.size()];
         int index = 0;
         double max = Double.NEGATIVE_INFINITY;
@@ -101,23 +96,39 @@ public class BayesianClassifier {
 //            System.out.println(currEmotionProb);
             index++;
         }
-//        etime = System.currentTimeMillis();
-//        System.out.println("time2 " + (etime - stime));
-//        stime = etime;
         int pred = ArrayMath.argmax(finalLabelProb);
-        System.out.println(pred + " " + predictedLabel);
+//        System.out.println(pred + " " + predictedLabel);
         return new Label(predictedLabel);
+
+    }
+    /*
+     * Public function for support for prediction
+     */
+    public Label predictLabel_BayesianClassifier(String text) {
+        calculateLabelProb();
+        return predictLabel(text);
     }
 
+    /*
+     * Classifies the label for each sentence in corpus and returns the corpus  with updated value of predicted label
+     */
     public Corpus do_classify() {
-//        TODO add functionality for label classification
-        return null;
+        calculateLabelProb();
+        for (Tweet tweet : trainingCorpus.getTweets().values()) {
+            tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
+        }
+        return trainingCorpus;
     }
 
+    /*
+     * Predicts the label for each sentence in corpus and returns the corpus  with updated value
+     */
     public Corpus predictLabel_BayesianClassifier(Corpus testCorpus) {
-//        TODO add functionality for label prediction
-
-        return null;
+        calculateLabelProb();
+        for (Tweet tweet : testCorpus.getTweets().values()) {
+            tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
+        }
+        return testCorpus;
     }
 }
 

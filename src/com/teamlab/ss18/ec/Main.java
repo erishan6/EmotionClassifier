@@ -7,7 +7,6 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-        // TODO Ask prof for repeation case and approach
         /*
         ****************************
         * Set init parameters      *
@@ -43,12 +42,34 @@ public class Main {
         System.out.println();
         evaluator.printEvalResults();
 
-        String filepath2 = "data/train_trial.csv";
+        String filepath2 = "data/train.csv";
+        System.out.println("training on " + filepath2);
         Corpus trainCorpus2 = new Corpus("trainCorpus", filepath2, 6);
-//        System.out.println(trainCorpus2.wordsList().get("\uD83D\uDE0B"));
-        trainCorpus2.printWordEmotionCount();
+//        trainCorpus2.printWordEmotionCount();
         BayesianClassifier bayesianClassifier = new BayesianClassifier(trainCorpus2);
-        bayesianClassifier.predictLabel_BayesianClassifier("@USERNAME @USERNAME Forget about him Bill, I've looked at his twitter feed & it obvious that he has mental health issues. We shouldn't mock the afflicted![NEWLINE]He gets [#TRIGGERWORD#] because of his inadequacies & just like a bully he tries to take it out on others.[NEWLINE]I do feel sorry for him!()*^%@!!-");
-
+//        bayesianClassifier.predictLabel_BayesianClassifier("@USERNAME @USERNAME Forget about him Bill, I've looked at his twitter feed & it obvious that he has mental health issues. We shouldn't mock the afflicted![NEWLINE]He gets [#TRIGGERWORD#] because of his inadequacies & just like a bully he tries to take it out on others.[NEWLINE]I do feel sorry for him!()*^%@!!-");
+        Corpus c = bayesianClassifier.do_classify();
+        Evaluator evaluator2 = new Evaluator(c);
+        evaluator2.printConfusionMatrix();
+        System.out.println();
+        evaluator2.printEvalResults();
+        System.out.println("******************************");
+        String filepath3 = "data/train_trial.csv";
+        System.out.println("testing on " + filepath3);
+        Corpus testCorpus = new Corpus("testCorpus", filepath3, 6);
+        Corpus c2 = bayesianClassifier.predictLabel_BayesianClassifier(testCorpus);
+        Evaluator evaluator3 = new Evaluator(c2);
+        evaluator3.printConfusionMatrix();
+        System.out.println();
+        evaluator3.printEvalResults();
+        System.out.println("******************************");
+        System.out.println("training on " + filepath3);
+        Corpus trainCorpus3 = new Corpus("trainCorpus2", filepath3, 6);
+        BayesianClassifier bayesianClassifier2 = new BayesianClassifier(trainCorpus3);
+        Corpus c3 = bayesianClassifier2.do_classify();
+        Evaluator evaluator4 = new Evaluator(c3);
+        evaluator4.printConfusionMatrix();
+        System.out.println();
+        evaluator4.printEvalResults();
     }
 }
