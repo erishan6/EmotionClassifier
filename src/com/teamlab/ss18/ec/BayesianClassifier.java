@@ -33,6 +33,7 @@ public class BayesianClassifier {
      * calculate probability of word given emotion
      */
     private double wordProbGivenEmotion(String word, String emotion) {
+        Long stime = System.currentTimeMillis();
         int totalOccurences = vocabTrainingCorpus;
         double emotionCount = vocabTrainingCorpus * 0.0001;
         if (trainingCorpus.wordEmotionCount().containsKey(word)) {
@@ -47,6 +48,9 @@ public class BayesianClassifier {
         } else {
 //            System.out.println("word is not present in corpus");
         }
+        Long etime = System.currentTimeMillis();
+        System.out.println(word + "  time2 " + (etime - stime));
+        stime = etime;
         return Math.log(emotionCount / totalOccurences);
     }
 
@@ -62,38 +66,56 @@ public class BayesianClassifier {
 
     }
 
-
-    public void do_classify() {
-//        TODO add functionality for label classification
-        //classify(feat1,...,featN) = argmax(P(cat)*PROD(P(featI|cat)
-
-    }
-
     /*
-     * Predicts the label index for text data ie sentence
+     * Predicts the label for text data ie sentence
      * Label index to label mapping
      */
-    public void predictLabel_BayesianClassifier(String text) {
-//        TODO add functionality of label as enum so that we can use it to predict or use something more appropriate (WIP)
+    public Label predictLabel_BayesianClassifier(String text) {
+        Long stime = System.currentTimeMillis();
+        calculateLabelProb();
+        Long etime = System.currentTimeMillis();
+        System.out.println("time " + (etime - stime));
+        stime = etime;
         double[] finalLabelProb = new double[labelProb.size()];
         int index = 0;
-        calculateLabelProb();
+        double max = Double.NEGATIVE_INFINITY;
+        String predictedLabel = "";
         for (String currEmotion : labelProb.keySet()) {
+            System.out.println(currEmotion);
             double currEmotionProb = labelProb.get(currEmotion);
-            String[] wordList = text.split("\\s+");
+            //TODO update regex precedence for appropraite results
+            String regex = "\\W*(\\@USERNAME)|\\W*(\\[#TRIGGERWORD#])|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\"";
+            String[] wordList = text.replaceAll(regex, " ").split("\\s+");
+
             for (String word : wordList) {
                 currEmotionProb += wordProbGivenEmotion(word, currEmotion);
             }
             finalLabelProb[index] = currEmotionProb;
-            System.out.println(currEmotionProb);
+            double value = currEmotionProb;
+            if (value > max) {
+                max = value;
+                predictedLabel = currEmotion;
+            }
+//            System.out.println(currEmotionProb);
             index++;
         }
+        etime = System.currentTimeMillis();
+        System.out.println("time2 " + (etime - stime));
+        stime = etime;
         int pred = ArrayMath.argmax(finalLabelProb);
-        System.out.println(pred);
+        System.out.println(pred + " " + predictedLabel);
+        return new Label(predictedLabel);
     }
 
-    public void predictLabel_BayesianClassifier(Corpus testCorpus) {
+    public Corpus do_classify() {
+//        TODO add functionality for label classification
+        return null;
+    }
+
+    public Corpus predictLabel_BayesianClassifier(Corpus testCorpus) {
 //        TODO add functionality for label prediction
+
+        return null;
     }
 }
 

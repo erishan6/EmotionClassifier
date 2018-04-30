@@ -71,7 +71,10 @@ public class Corpus {
         HashMap<String,Integer> corpusWordsList  = new HashMap<String, Integer>();
         for (Tweet singleTweet : tweets.values()) {
             String sentence = singleTweet.getSentence();
-            String[] wordsList = sentence.split("\\s+");
+            //TODO update regex precedence for appropraite results and fix for extra space
+            String regex = "\\W*(\\@USERNAME)|\\W*(\\[#TRIGGERWORD#])|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\"";
+//            String regex = "\\s+|\\W*(\\@USERNAME)\\W*|\\W*(\\[#TRIGGERWORD#])\\W*|\\W*(\\[NEWLINE\\])\\W*|\\W*(http://url.removed)\\W*";
+            String[] wordsList = sentence.replaceAll(regex, " ").split("\\s+");
             for (String word : wordsList) {
                 if (corpusWordsList.containsKey(word)) {
                     int count = corpusWordsList.get(word);
@@ -82,6 +85,7 @@ public class Corpus {
                 }
             }
         }
+        System.out.println("Corpus size " + corpusWordsList.size());
 
         return corpusWordsList;
     }

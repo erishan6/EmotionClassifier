@@ -48,8 +48,7 @@ public class Main {
 //        System.out.println(trainCorpus2.wordsList().get("\uD83D\uDE0B"));
         trainCorpus2.printWordEmotionCount();
         BayesianClassifier bayesianClassifier = new BayesianClassifier(trainCorpus2);
-        bayesianClassifier.calculateLabelProb();
-        bayesianClassifier.predictLabel_BayesianClassifier("Adjoa looks [#TRIGGERWORD#] that Nick has put her up for nomination :(");
+        bayesianClassifier.predictLabel_BayesianClassifier("@USERNAME @USERNAME Forget about him Bill, I've looked at his twitter feed & it obvious that he has mental health issues. We shouldn't mock the afflicted![NEWLINE]He gets [#TRIGGERWORD#] because of his inadequacies & just like a bully he tries to take it out on others.[NEWLINE]I do feel sorry for him!()*^%@!!-");
 
     }
 }
