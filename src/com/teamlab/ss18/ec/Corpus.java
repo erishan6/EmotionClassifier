@@ -69,11 +69,8 @@ public class Corpus {
     public HashMap<String, Integer> wordsList(){
         HashMap<String,Integer> corpusWordsList  = new HashMap<String, Integer>();
         for (Tweet singleTweet : tweets.values()) {
-            String sentence = singleTweet.getSentence();
-            //TODO update regex precedence for appropraite results and fix for extra space
-            String regex = "\\W*(\\@USERNAME)|\\W*(\\[#TRIGGERWORD#])|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\"";
-//            String regex = "\\s+|\\W*(\\@USERNAME)\\W*|\\W*(\\[#TRIGGERWORD#])\\W*|\\W*(\\[NEWLINE\\])\\W*|\\W*(http://url.removed)\\W*";
-            String[] wordsList = sentence.replaceAll(regex, " ").split("\\s+");
+            String sentence = Utility.convertEmotionToText(singleTweet.getSentence());
+            String[] wordsList = sentence.replaceAll(Utility.ADV_REGEX, " ").split("\\s+");
             for (String word : wordsList) {
                 if (corpusWordsList.containsKey(word)) {
                     int count = corpusWordsList.get(word);
@@ -92,8 +89,8 @@ public class Corpus {
     public HashMap<String, HashMap<String,Integer>> wordEmotionCount() {
         HashMap<String, HashMap<String,Integer>> wordEmotionCount = new HashMap<>();
         for (Tweet singleTweet : tweets.values()) {
-            String sentence = singleTweet.getSentence();
-            String[] wordsList = sentence.split("\\s+");
+            String sentence = Utility.convertEmotionToText(singleTweet.getSentence());
+            String[] wordsList = sentence.replaceAll(Utility.ADV_REGEX, " ").split("\\s+");
             String label = singleTweet.getGoldLabel().getLabelString();
             for (String word : wordsList) {
                 HashMap<String, Integer> emotionCount;
