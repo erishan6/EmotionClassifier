@@ -1,0 +1,7 @@
+vecgorSpace
+distSem
+predict other data
+
+features
+change classifier
+change task (for example to semantic... word prediction)
