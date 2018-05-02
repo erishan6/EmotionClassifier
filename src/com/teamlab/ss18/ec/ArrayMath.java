@@ -70,6 +70,19 @@ public class ArrayMath {
         return maxIndex;
     }
 
+    public static int argmax(double[] vector) {
+        int maxIndex = -1;
+        double max = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < vector.length; i++) {
+            double value = vector[i];
+            if (value > max) {
+                max = value;
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
     public static void printArrayAsAligned(ArrayList<String> headers, double[][] matrix){
         int longestString = 0;
         for (String header : headers) {

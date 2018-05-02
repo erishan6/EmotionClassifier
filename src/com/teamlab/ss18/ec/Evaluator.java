@@ -50,6 +50,8 @@ public class Evaluator {
             this.confusionMatrix[predIndex][numOfLabels]++; //increment number of predictions for currentPredictionLabel
             this.confusionMatrix[numOfLabels][numOfLabels]++; //increment total amount of predictions
         }
+
+
     }
 
     /**
@@ -90,10 +92,10 @@ public class Evaluator {
         }
         System.out.println("***************");
         System.out.println("Average: P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+
     }
 
     public void printConfusionMatrix(){
-
         //String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
 
         ArrayList<String> labels = new ArrayList<>();
@@ -185,4 +187,6 @@ public class Evaluator {
         }
         return sum/numOfLabels;
     }
+
+
 }

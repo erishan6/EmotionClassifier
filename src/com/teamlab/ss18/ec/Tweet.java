@@ -35,6 +35,10 @@ public class Tweet {
         return sentence;
     }
 
+    public void setPredictedLabel(Label predictedLabel) {
+        this.predictedLabel = predictedLabel;
+    }
+
     public void setPredictedLabel(String predictedLabel) {
         this.predictedLabel = new Label(predictedLabel);
     }
@@ -87,4 +91,5 @@ public class Tweet {
                 this.features.add(newFeature);
         }
     }
+
 }
