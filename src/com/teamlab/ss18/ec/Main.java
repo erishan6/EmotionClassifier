@@ -14,7 +14,8 @@ public class Main {
         * Set init parameters      *
         ****************************
         */
-        String filepath = "data/small/trial_joy.csv";
+        String trainFilePath = "data/full/train/train.csv";
+        String testFilePath = "data/full/test/test.csv";
         int epochs = 100;
         boolean shuffle = true;
 
@@ -24,12 +25,14 @@ public class Main {
         ****************************
         */
 
-        Corpus trainCorpus = new Corpus("trainCorpus", filepath, 6);
+        Corpus trainCorpus = new Corpus("trainCorpus", trainFilePath, 6);
+        Corpus testCorpus = new Corpus("testCorpus", testFilePath, 6);
+
 
         //Perceptron perceptron = new Perceptron();
         PerceptronMap perceptron = new PerceptronMap();
         perceptron.fit(trainCorpus,epochs, shuffle, 2, 10);
-        perceptron.predict(trainCorpus);
+        perceptron.predict(testCorpus);
 
 
         ArrayList<Tweet> a = new ArrayList<>();
@@ -38,8 +41,8 @@ public class Main {
         System.out.println("-----------------");
         System.out.println("Evaluation on testset:");
 
-        //testCorpus zum test nehmen
-        Evaluator evaluator = new Evaluator(trainCorpus); //TODO: pass testCorpus not trainCorpus
+
+        Evaluator evaluator = new Evaluator(testCorpus); //TODO: pass testCorpus not trainCorpus
 
         evaluator.printConfusionMatrix();
         System.out.println();
