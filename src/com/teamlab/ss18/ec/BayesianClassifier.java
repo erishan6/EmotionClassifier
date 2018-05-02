@@ -73,6 +73,7 @@ public class BayesianClassifier {
      * Label index to label mapping
      */
     private Label predictLabel(String text) {
+        text = Utility.convertEmotionToText(text);
         double[] finalLabelProb = new double[labelProb.size()];
         int index = 0;
         double max = Double.NEGATIVE_INFINITY;
@@ -80,9 +81,7 @@ public class BayesianClassifier {
         for (String currEmotion : labelProb.keySet()) {
 //            System.out.println(currEmotion);
             double currEmotionProb = labelProb.get(currEmotion);
-            //TODO update regex precedence for appropraite results
-            String regex = "\\W*(\\@USERNAME)|\\W*(\\[#TRIGGERWORD#])|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\"";
-            String[] wordList = text.replaceAll(regex, " ").split("\\s+");
+            String[] wordList = text.replaceAll(Utility.ADV_REGEX, " ").split("\\s+");
 
             for (String word : wordList) {
                 currEmotionProb += wordProbGivenEmotion(word, currEmotion);
