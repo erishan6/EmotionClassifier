@@ -5,10 +5,10 @@ import java.util.*;
 /**
  * Created by deniz on 26.04.18.
  */
-public class PerceptronMap {
+public class PerceptronMap_withArgMax {
     HashMap<Integer,HashMap<String,Integer>> W;
 
-    public PerceptronMap(){
+    public PerceptronMap_withArgMax(){
     }
 
     /**

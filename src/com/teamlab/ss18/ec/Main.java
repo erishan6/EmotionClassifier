@@ -27,9 +27,9 @@ public class Main {
         Corpus testCorpus = new Corpus("testCorpus", testFilePath, 6);
 
 
-        //Perceptron perceptron = new Perceptron();
-        PerceptronMap_tmp perceptron = new PerceptronMap_tmp();
-        perceptron.fit(trainCorpus,epochs, shuffle, 2, 10);
+        //Perceptron_ArrayWeights perceptron = new Perceptron_ArrayWeights();
+        Perceptron perceptron = new Perceptron();
+        perceptron.fit(trainCorpus, testCorpus, epochs, shuffle, 1, 10);
         perceptron.predict(testCorpus);
 
 
@@ -39,7 +39,7 @@ public class Main {
         System.out.println("-----------------");
         System.out.println("Evaluation on testset:");
 
-        Evaluator evaluator = new Evaluator(testCorpus); //TODO: pass testCorpus not trainCorpus
+        Evaluator evaluator = new Evaluator(testCorpus);
 
         evaluator.printConfusionMatrix();
         System.out.println();
