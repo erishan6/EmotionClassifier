@@ -28,7 +28,7 @@ public class Main {
 
 
         //Perceptron perceptron = new Perceptron();
-        PerceptronMap perceptron = new PerceptronMap();
+        PerceptronMap_tmp perceptron = new PerceptronMap_tmp();
         perceptron.fit(trainCorpus,epochs, shuffle, 2, 10);
         perceptron.predict(testCorpus);
 
@@ -44,6 +44,9 @@ public class Main {
         evaluator.printConfusionMatrix();
         System.out.println();
         evaluator.printEvalResults();
+
+        /*
+
 
         String filepath2 = "data/train.csv";
         System.out.println("training on " + filepath2);
@@ -74,5 +77,6 @@ public class Main {
         evaluator4.printConfusionMatrix();
         System.out.println();
         evaluator4.printEvalResults();
+    */
     }
 }
