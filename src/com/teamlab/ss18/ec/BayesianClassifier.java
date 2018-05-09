@@ -2,8 +2,7 @@ package com.teamlab.ss18.ec;
 
 import java.util.HashMap;
 
-public class BayesianClassifier {
-    private Corpus trainingCorpus;
+public class BayesianClassifier extends AbstractClassifier {
     private HashMap<String, Integer> labelCount = new HashMap<>();
     private HashMap<String, Double> labelProb = new HashMap<>();
     private HashMap<String, HashMap<String, Integer>> wordsEmotionMap;
@@ -11,7 +10,7 @@ public class BayesianClassifier {
     private Integer emotionCountTotal;
 
     public BayesianClassifier(Corpus trainingCorpus) {
-        this.trainingCorpus = trainingCorpus;
+        super(trainingCorpus);
         initParams();
     }
 
@@ -59,7 +58,7 @@ public class BayesianClassifier {
     /*
      * calculate params like label prob.
      */
-    public void calculateLabelProb() {
+    private void calculateLabelProb() {
         calculateLabelCount();
         emotionCountTotal = trainingCorpus.getTweets().size();
         for (String emotion : labelCount.keySet()) {
@@ -100,6 +99,7 @@ public class BayesianClassifier {
         return new Label(predictedLabel);
 
     }
+
     /*
      * Public function for support for prediction
      */
@@ -108,16 +108,15 @@ public class BayesianClassifier {
         return predictLabel(text);
     }
 
-    /*
-     * Classifies the label for each sentence in corpus and returns the corpus  with updated value of predicted label
-     */
-    public Corpus do_classify() {
-        calculateLabelProb();
-        for (Tweet tweet : trainingCorpus.getTweets().values()) {
-            tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
-        }
-        return trainingCorpus;
-    }
+
+//    public Corpus do_classify() {
+//        calculateLabelProb();
+//        for (Tweet tweet : trainingCorpus.getTweets().values()) {
+//            tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
+//        }
+//        return trainingCorpus;
+//    }
+
 
     /*
      * Predicts the label for each sentence in corpus and returns the corpus  with updated value
@@ -127,6 +126,37 @@ public class BayesianClassifier {
         for (Tweet tweet : testCorpus.getTweets().values()) {
             tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
         }
+        return testCorpus;
+    }
+
+    private void internalTrain(Corpus corpus) {
+        calculateLabelProb();
+        for (Tweet tweet : corpus.getTweets().values()) {
+            tweet.setPredictedLabel(predictLabel(tweet.getSentence()));
+        }
+    }
+
+    /*
+     * Classifies the label for each sentence in corpus and returns the corpus  with updated value of predicted label
+     */
+
+    @Override
+    public void train() {
+        internalTrain(trainingCorpus);
+    }
+
+    @Override
+    public void evaluate(Corpus corpus) {
+        Evaluator evaluator = new Evaluator(corpus);
+        evaluator.printConfusionMatrix();
+        System.out.println();
+        evaluator.printEvalResults();
+        System.out.println("******************************");
+    }
+
+    @Override
+    public Corpus predict(Corpus testCorpus) {
+        internalTrain(testCorpus);
         return testCorpus;
     }
 }
