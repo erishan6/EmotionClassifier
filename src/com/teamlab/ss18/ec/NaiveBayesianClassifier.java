@@ -2,14 +2,14 @@ package com.teamlab.ss18.ec;
 
 import java.util.HashMap;
 
-public class BayesianClassifier extends AbstractClassifier {
+public class NaiveBayesianClassifier extends AbstractClassifier {
     private HashMap<String, Integer> labelCount = new HashMap<>();
     private HashMap<String, Double> labelProb = new HashMap<>();
     private HashMap<String, HashMap<String, Integer>> wordsEmotionMap;
     private Integer vocabTrainingCorpus;
     private Integer emotionCountTotal;
 
-    public BayesianClassifier(Corpus trainingCorpus) {
+    public NaiveBayesianClassifier(Corpus trainingCorpus) {
         super(trainingCorpus);
         initParams();
     }

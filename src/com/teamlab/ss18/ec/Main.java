@@ -1,8 +1,6 @@
 package com.teamlab.ss18.ec;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class Main {
@@ -78,7 +76,7 @@ public class Main {
         String filepath2 = "data/train.csv";
         System.out.println("training on " + filepath2);
         Corpus trainCorpus2 = new Corpus("trainCorpus", filepath2, 6);
-        AbstractClassifier naiveBayesian = new BayesianClassifier(trainCorpus2);
+        AbstractClassifier naiveBayesian = new NaiveBayesianClassifier(trainCorpus2);
         naiveBayesian.train();
         // dev corpus to be passed for evaluation
         naiveBayesian.evaluate(naiveBayesian.trainingCorpus);
