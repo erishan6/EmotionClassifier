@@ -6,7 +6,7 @@ import java.util.UUID;
 public class Tweet {
     private UUID id;
     private Label goldLabel = null;
-    private Label predictedLabel = null; //TODO: update for final version
+    private Label predictedLabel = null;
     private String sentence = "";
     private ArrayList<String> features;
 

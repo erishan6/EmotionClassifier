@@ -21,6 +21,8 @@ public class Corpus {
         this.filePath = filePath;
         this.numberOfLabels = numberOfLabels;
 
+        //TODO: how do we use the overloaded createCorpus method?
+
         tweets = createCorpus(this.filePath);
     }
 
@@ -34,6 +36,22 @@ public class Corpus {
 
     public int size(){
         return tweets.size();
+    }
+
+    private LinkedHashMap createCorpus(String[] dataset) {
+        //TODO: test overloaded createCorpus
+        LinkedHashMap tweetMap = new LinkedHashMap();
+
+        for (String tweetRaw : dataset) {
+            String mystring = tweetRaw;
+            String arr[] = mystring.split("\t| ", 2);
+            String goldLabel = arr[0];
+            String sentence = arr[1];
+            Tweet currentTweet = new Tweet(sentence, goldLabel);
+            tweetMap.put(currentTweet.getId(), currentTweet);
+        }
+
+        return tweetMap;
     }
 
     private LinkedHashMap createCorpus(String filePath) {

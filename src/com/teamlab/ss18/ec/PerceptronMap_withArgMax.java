@@ -72,7 +72,6 @@ public class PerceptronMap_withArgMax {
             Tweet currentTweet = corpus.getTweets().get(tweetID);
 
             int[] dotResults = new int[corpus.getNumberOfLabels()]; //stores results from "vectorMultiplication".
-            //TODO: change to not using dotResults
             for (Integer classIndex : Label.getLabelsMapInt().keySet()) {
 
                 ArrayList<String> currentFeatureVector = currentTweet.getFeatures();
@@ -149,7 +148,6 @@ public class PerceptronMap_withArgMax {
             Tweet currentTweet = tweets.get(id);
 
             int[] dotResults = new int[corpus.getNumberOfLabels()]; //stores results from "vectorMultiplication".
-            //TODO: change here as well
 
             for (Integer classIndex : Label.getLabelsMapInt().keySet()) {
                 ArrayList<String> currentFeatureVector = currentTweet.getFeatures();

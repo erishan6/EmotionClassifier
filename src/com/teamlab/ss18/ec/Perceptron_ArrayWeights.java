@@ -15,11 +15,9 @@ public class Perceptron_ArrayWeights {
 
     public void train(Corpus corpus, int numberOfFeatures){
 
-        //TODO: add epochs
-        //TODO: shuffle input data before every epoch
         System.out.println("start training");
 
-        W = new int[corpus.getNumberOfLabels()][numberOfFeatures]; //TODO: change numberOfFeatures to be taken from corpus
+        W = new int[corpus.getNumberOfLabels()][numberOfFeatures];
 
         LinkedHashMap<UUID, Tweet> tweets = corpus.getTweets();
 
