@@ -1,11 +1,12 @@
 package com.teamlab.ss18.ec;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-public class Main {
+/**
+ * Created by deniz on 09.05.18.
+ */
+public class MainPerceptron {
 
     public static void main(String[] args) throws IOException {
         /*
@@ -51,6 +52,9 @@ public class Main {
 
         //Perceptron_ArrayWeights perceptron = new Perceptron_ArrayWeights();
         Perceptron perceptron = new Perceptron();
+
+        //perceptron.init(); //all params
+
         perceptron.fit(trainCorpus, testCorpus, epochs, shuffle, 1, 10);
         perceptron.predict(testCorpus);
 
@@ -67,25 +71,5 @@ public class Main {
         System.out.println();
         evaluator.printEvalResults();
 
-
-        /*
-         *
-         * Bayesian section
-         *
-         * */
-
-
-        String filepath2 = "data/train.csv";
-        System.out.println("training on " + filepath2);
-        Corpus trainCorpus2 = new Corpus("trainCorpus", filepath2, 6);
-        AbstractClassifier naiveBayesian = new BayesianClassifier(trainCorpus2);
-        naiveBayesian.train();
-        // dev corpus to be passed for evaluation
-        naiveBayesian.evaluate(naiveBayesian.trainingCorpus);
-        // no dev set used
-        String filepath3 = "data/train_trial.csv";
-        Corpus testCorpus2 = new Corpus("testCorpus", filepath3, 6);
-        naiveBayesian.predict(testCorpus2);
-        naiveBayesian.evaluate(testCorpus2);
     }
 }

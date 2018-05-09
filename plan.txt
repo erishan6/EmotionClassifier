@@ -1,7 +1,4 @@
-vecgorSpace
-distSem
-predict other data
+build simple nn with DL4J
 
-features
-change classifier
-change task (for example to semantic... word prediction)
+add embeddings
+add build CNN or LSTM

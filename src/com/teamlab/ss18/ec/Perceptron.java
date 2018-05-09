@@ -9,6 +9,7 @@ public class Perceptron {
     HashMap<String,HashMap<String,Double>> W;
 
     public Perceptron(){
+        //super()
     }
 
     /**

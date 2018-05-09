@@ -21,9 +21,9 @@ public class Corpus {
         this.filePath = filePath;
         this.numberOfLabels = numberOfLabels;
 
-        //TODO: how do we use the overloaded createCorpus method?
+        //TODO: how do we use the overloaded create method?
 
-        tweets = createCorpus(this.filePath);
+
     }
 
     public int getNumberOfLabels() {
@@ -38,8 +38,7 @@ public class Corpus {
         return tweets.size();
     }
 
-    private LinkedHashMap createCorpus(String[] dataset) {
-        //TODO: test overloaded createCorpus
+    public LinkedHashMap create(String[] dataset) {
         LinkedHashMap tweetMap = new LinkedHashMap();
 
         for (String tweetRaw : dataset) {
@@ -54,7 +53,8 @@ public class Corpus {
         return tweetMap;
     }
 
-    private LinkedHashMap createCorpus(String filePath) {
+    public LinkedHashMap create() {
+        String filePath = this.filePath;
         LinkedHashMap tweetMap = null;
         try {
             tweetMap = new LinkedHashMap();
