@@ -5,52 +5,38 @@ import java.util.*;
 /**
  * Created by deniz on 26.04.18.
  */
-public class Perceptron {
+public class Perceptron extends AbstractClassifier{
     HashMap<String,HashMap<String,Double>> W;
 
-    public Perceptron(){
-        //super()
+    public Perceptron(Corpus trainingCorpus){
+        super(trainingCorpus);
     }
 
     /**
      * trains the model on trainCorpus for given epochs.
      * If shuffle is true the data will be shuffled before each epoch.
      * If verbose is greater 0 average precision, recall and fscore will be printed.
-     * @param trainCorpus Corpus object containing train data
-     * @param testCorpus Corpus object containing test data
+     * @param evalCorpus Corpus object containing test data
      * @param epochs number of training epochs
      * @param shuffle true for shuffle after each epoch
      * @param verbose
      * @param printEveryNthEpoch if verbose is bigger 0, evaluation is printed every nth epoch
      */
-    public void fit(Corpus trainCorpus, Corpus testCorpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
+    public void fit(Corpus evalCorpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
         W = new HashMap<>();
         for (int epoch = 1; epoch <= epochs; epoch++) {
 
             long startTime = System.currentTimeMillis();
 
-            ArrayList<String[]> results = train(trainCorpus, shuffle);
+            train();
             long endTime = System.currentTimeMillis();
             long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-
-
-
 
             if (printEveryNthEpoch > 0 && (epoch % printEveryNthEpoch == 0 || epoch == epochs || epoch == 1)){
 
                 System.out.println("Epoch "+epoch + " ("+duration+"ms)");
-                Evaluator trainEvaluator = new Evaluator(results.get(0), results.get(1), trainCorpus.getNumberOfLabels());
-                this.predict(testCorpus);
-                Evaluator testEvaluator = new Evaluator(testCorpus);
-                if (verbose > 1){
-                    System.out.println("Confusion Matrix Train");
-                    trainEvaluator.printConfusionMatrix();
-                }
-                if (verbose > 0) {
-                    System.out.println("\tTrain Precision: " + trainEvaluator.getPrecisionAverage());
-                    System.out.println("\tTrain Recall: " + trainEvaluator.getRecallAverage());
-                    System.out.println("\tTrain Fscore: " + trainEvaluator.getFScoreAverage());
-                }
+                this.predict(evalCorpus);
+                Evaluator testEvaluator = new Evaluator(evalCorpus);
 
                 if (verbose > 1){
                     System.out.println("Confusion Matrix Test");
@@ -69,23 +55,24 @@ public class Perceptron {
         }
     }
 
+
     /**
      * trains the model for one epoch and updates the weightMatrix
-     * @param corpus A HashMap with Tweets as values and UUIDs as key
-     * @param shuffle true for shuffle after each epoch
      * @return return a list of String arrays. first array is an array of predicted labels. Second array is an array of gold labels.
      */
-    private ArrayList<String[]> train(Corpus corpus, boolean shuffle){
-        String[] predictions = new String[corpus.size()]; //used for after-epoch evaluation
-        String[] golds = new String[corpus.size()]; //used for after-epoch evaluation
+    @Override
+    public void train(){
+
+        Corpus corpus = this.trainingCorpus;
+        boolean shuffle = true;
 
         ArrayList<UUID> ids = new ArrayList<>();
+
         ids.addAll(corpus.getTweets().keySet());
 
         if (shuffle)
             Collections.shuffle(ids);
 
-        int samplesSeen = 0;
         for (UUID tweetID : ids) {
             Tweet currentTweet = corpus.getTweets().get(tweetID);
 
@@ -117,15 +104,10 @@ public class Perceptron {
 
             String goldClass = currentTweet.getGoldLabel().getLabelString();
 
-            predictions[samplesSeen] = predictedClass;
-            golds[samplesSeen] = goldClass;
-            samplesSeen++;
-
 
             // UPDATE WEIGHTS
             if (!predictedClass.equals(goldClass)){
                 for (String feature : currentTweet.getFeatures()) {
-
                     //UPDATE weights of predicted class
                     Double oldWeightPredicted = W.get(predictedClass).get(feature);
                     if (oldWeightPredicted == null)
@@ -153,13 +135,8 @@ public class Perceptron {
                 }
             }
         }
-
-        ArrayList<String[]> predictionsAndGolds = new ArrayList<>();
-        predictionsAndGolds.add(predictions);
-        predictionsAndGolds.add(golds);
-
-        return predictionsAndGolds;
     }
+
 
     /**
      * predicts classes for each tweet in corpus based on trained models
@@ -196,5 +173,11 @@ public class Perceptron {
             currentTweet.setPredictedLabel(predictedLabel);
         }
         return corpus;
+    }
+
+
+    @Override
+    public void evaluate(Corpus corpus) {
+
     }
 }

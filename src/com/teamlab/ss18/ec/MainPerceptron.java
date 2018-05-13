@@ -15,7 +15,8 @@ public class MainPerceptron {
         ****************************
         */
         String trainFilePath = "data/full/train/train.csv";
-        String testFilePath = "data/full/test/test.csv";
+        //String testFilePath = "data/full/test/test.csv";
+        double trainPercentage = 0.8;
         int epochs = 100;
         boolean shuffle = true;
 
@@ -25,42 +26,34 @@ public class MainPerceptron {
         ****************************
         */
 
-        Corpus trainCorpus = new Corpus("trainCorpus", trainFilePath, 6);
-        trainCorpus.create();
-        Corpus testCorpus = new Corpus("testCorpus", testFilePath, 6);
-        testCorpus.create();
-
-
-
-
-
-
         DataSet dataSet = new DataSet();
-        boolean writeToFile = false;
-        //dataSet.trainTestSplit("data/full/data_original", 0.7, writeToFile);
-        dataSet.trainTestSplit("data/small/trial_small.csv", 0.5, writeToFile);
-        String[] trainSamples = dataSet.train;
-        String[] testSamples = dataSet.test;
+        dataSet.trainTestSplit(trainFilePath, trainPercentage, false);
 
-        Corpus tmpCorpus = new Corpus("tmp", "", 6);
-        tmpCorpus.create(trainSamples);
+        Corpus trainCorpus = new Corpus("trainCorpus", "", 6);
+        trainCorpus.create(dataSet.train);
 
 
+        Corpus testCorpus = new Corpus("testCorpus", "", 6);
+        testCorpus.create(dataSet.test);
 
 
+
+
+
+        //Corpus trainCorpus = new Corpus("trainCorpus", trainFilePath, 6);
+        //trainCorpus.create();
+        //Corpus testCorpus = new Corpus("testCorpus", testFilePath, 6);
+        //testCorpus.create();
 
 
         //Perceptron_ArrayWeights perceptron = new Perceptron_ArrayWeights();
-        Perceptron perceptron = new Perceptron();
+        Perceptron perceptron = new Perceptron(trainCorpus);
 
         //perceptron.init(); //all params
 
-        perceptron.fit(trainCorpus, testCorpus, epochs, shuffle, 1, 10);
+        perceptron.fit(testCorpus, epochs, shuffle, 1, 10);
         perceptron.predict(testCorpus);
 
-
-        ArrayList<Tweet> a = new ArrayList<>();
-        a.addAll(trainCorpus.getTweets().values());
 
         System.out.println("-----------------");
         System.out.println("Evaluation on testset:");

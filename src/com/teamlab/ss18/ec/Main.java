@@ -48,9 +48,9 @@ public class Main {
 
 
         //Perceptron_ArrayWeights perceptron = new Perceptron_ArrayWeights();
-        Perceptron perceptron = new Perceptron();
-        perceptron.fit(trainCorpus, testCorpus, epochs, shuffle, 1, 10);
-        perceptron.predict(testCorpus);
+//        Perceptron perceptron = new Perceptron();
+//        perceptron.fit(testCorpus, epochs, shuffle, 1, 10);
+//        perceptron.predict(testCorpus);
 
 
         ArrayList<Tweet> a = new ArrayList<>();

@@ -83,13 +83,43 @@ public class Tweet {
 
          */
         this.features = new ArrayList<>();
-        String[] splitTweet = this.sentence.split(" ");
 
+
+
+        String sentence = Utility.convertEmotionToText(this.sentence);
+
+/*
+        sentence = Utility.convertEmotionToText(sentence);
+        if(!sentence.equals(this.sentence)){
+            System.out.println("-------------------");
+            System.out.println(this.sentence);
+            System.out.println(sentence);
+        }
+*/
+
+
+        //String[] splitTweet = this.sentence.split(" ");
+        String[] splitTweet = sentence.split(" ");
+
+        System.out.println(sentence);
         for (String token : splitTweet) {
+            token = token.toLowerCase().trim();
+            String punctuationRegex = "[.,;:\\-\\\\\\/!?&\"']";
+
+
+            token = token.replaceAll(punctuationRegex, "");
+
             String newFeature = "w="+token;
             if ( ! this.features.contains(newFeature))
-                this.features.add(newFeature);
+                if (!newFeature.equals("w=")) //ignore empty features (might be created when removing punctuation)
+                    this.features.add(newFeature);
         }
+
+        for (String feature : this.features) {
+            System.out.print(feature+" ");
+        }
+        System.out.println("\n_________________-");
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.teamlab.ss18.ec;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -42,14 +43,18 @@ public class Corpus {
         LinkedHashMap tweetMap = new LinkedHashMap();
 
         for (String tweetRaw : dataset) {
-            String mystring = tweetRaw;
-            String arr[] = mystring.split("\t| ", 2);
+            String arr[] = tweetRaw.split("\t| ", 2);
+
             String goldLabel = arr[0];
             String sentence = arr[1];
+
             Tweet currentTweet = new Tweet(sentence, goldLabel);
             tweetMap.put(currentTweet.getId(), currentTweet);
         }
 
+        //System.exit(0);
+
+        tweets = tweetMap;
         return tweetMap;
     }
 
