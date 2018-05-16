@@ -7,28 +7,44 @@ import java.util.*;
  */
 public class Perceptron extends AbstractClassifier{
     HashMap<String,HashMap<String,Double>> W;
+    Corpus evalCorpus;
+    int epochs;
+    boolean shuffle;
+    int verbose;
+    int printEveryNthEpoch;
 
-    public Perceptron(Corpus trainingCorpus){
+    /**
+     * @param trainingCorpus Corpus object containing train data
+     * @param evalCorpus Corpus object containing test data
+     * @param epochs number of training epochs
+     * @param shuffle true for shuffle after each epoch
+     * @param verbose amount of stdio-output
+     * @param printEveryNthEpoch if verbose is bigger 0, evaluation is printed every nth epoch
+     */
+    public Perceptron(Corpus trainingCorpus, Corpus evalCorpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
         super(trainingCorpus);
+        this.evalCorpus = evalCorpus;
+        this.epochs = epochs;
+        this.shuffle = shuffle;
+        this.verbose = verbose;
+        this.printEveryNthEpoch = printEveryNthEpoch;
     }
+
+
 
     /**
      * trains the model on trainCorpus for given epochs.
      * If shuffle is true the data will be shuffled before each epoch.
      * If verbose is greater 0 average precision, recall and fscore will be printed.
-     * @param evalCorpus Corpus object containing test data
-     * @param epochs number of training epochs
-     * @param shuffle true for shuffle after each epoch
-     * @param verbose
-     * @param printEveryNthEpoch if verbose is bigger 0, evaluation is printed every nth epoch
      */
-    public void fit(Corpus evalCorpus, int epochs, boolean shuffle, int verbose, int printEveryNthEpoch){
+    @Override
+    public void train(){
         W = new HashMap<>();
         for (int epoch = 1; epoch <= epochs; epoch++) {
 
             long startTime = System.currentTimeMillis();
 
-            train();
+            train2();
             long endTime = System.currentTimeMillis();
             long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 
@@ -68,8 +84,7 @@ public class Perceptron extends AbstractClassifier{
      * trains the model for one epoch and updates the weightMatrix
      * @return return a list of String arrays. first array is an array of predicted labels. Second array is an array of gold labels.
      */
-    @Override
-    public void train(){
+    private void train2(){
 
         Corpus corpus = this.trainingCorpus;
         boolean shuffle = true;
@@ -187,5 +202,14 @@ public class Perceptron extends AbstractClassifier{
     @Override
     public void evaluate(Corpus corpus) {
 
+
+        System.out.println("-----------------");
+        System.out.println("Evaluation on testset:");
+
+        Evaluator evaluator = new Evaluator(corpus);
+
+        evaluator.printConfusionMatrix();
+        System.out.println();
+        evaluator.printEvalResults();
     }
 }

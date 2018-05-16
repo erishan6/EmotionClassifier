@@ -11,7 +11,7 @@ public class Main {
         * Set init parameters      *
         ****************************
         */
-        String trainFilePath = "data/full/train/train.csv";
+        String trainFilePath = "data/full/train2/train2.csv";
         String testFilePath = "data/full/test/test.csv";
         int epochs = 100;
         boolean shuffle = true;
@@ -49,7 +49,7 @@ public class Main {
 
         //Perceptron_ArrayWeights perceptron = new Perceptron_ArrayWeights();
 //        Perceptron perceptron = new Perceptron();
-//        perceptron.fit(testCorpus, epochs, shuffle, 1, 10);
+//        perceptron.train(testCorpus, epochs, shuffle, 1, 10);
 //        perceptron.predict(testCorpus);
 
 
@@ -73,7 +73,7 @@ public class Main {
          * */
 
 
-        String filepath2 = "data/train.csv";
+        String filepath2 = "data/train2.csv";
         System.out.println("training on " + filepath2);
         Corpus trainCorpus2 = new Corpus("trainCorpus", filepath2, 6);
         AbstractClassifier naiveBayesian = new NaiveBayesianClassifier(trainCorpus2);

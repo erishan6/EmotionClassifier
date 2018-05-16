@@ -15,8 +15,8 @@ public class DataSet {
 
 
     public void trainTestSplit(String filePath, double trainPercentage, boolean writeToFile) throws IOException {
-        //TODO: even distributuion of classes
-        //
+
+
         Scanner scanner = new Scanner(new File(filePath));
         scanner.useDelimiter("\n");
 
