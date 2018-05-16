@@ -1,0 +1,4 @@
+build simple nn with DL4J
+
+add embeddings
+add build CNN or LSTM

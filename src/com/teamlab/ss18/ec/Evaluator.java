@@ -1,9 +1,6 @@
 package com.teamlab.ss18.ec;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -12,23 +9,15 @@ import java.util.UUID;
 public class Evaluator {
 
     private int numOfLabels;
-    private HashMap<String, Integer> labelMap = new HashMap<>(); //for mapping labels onto distinct int values
-
-    private String[] labels;
     private double[][] confusionMatrix = null;
-
 
     public Evaluator(String[] yPred, String[] yGold, int numOfLabels){
         this.numOfLabels = numOfLabels;
-        this.labels = new String[numOfLabels];
-
-
         fillMatrix(yPred, yGold);
     }
 
     public Evaluator(Corpus corpus){
         this.numOfLabels = corpus.getNumberOfLabels();
-        this.labels = new String[corpus.getNumberOfLabels()];
         fillMatrix(corpus);
     }
 
@@ -46,23 +35,11 @@ public class Evaluator {
         for (UUID id : corpus.getTweets().keySet()) {
             Tweet currentTweet = corpus.getTweets().get(id);
 
+            String currentPredictionLabel = currentTweet.getPredictedLabel().getLabelString();
+            String currentGoldLabel = currentTweet.getGoldLabel().getLabelString();
 
-            String currentPredictionLabel = currentTweet.getPredictedLabel();
-            String currentGoldLabel = currentTweet.getGoldLabel();
-
-            //add unseen labels to labelMap
-            if (!labelMap.keySet().contains(currentPredictionLabel)){
-                labels[labelsSeen] = currentPredictionLabel;
-                labelMap.put(currentPredictionLabel, labelsSeen++);
-            }
-
-            if (!labelMap.keySet().contains(currentGoldLabel)){
-                labels[labelsSeen] = currentGoldLabel;
-                labelMap.put(currentGoldLabel,labelsSeen++);
-            }
-
-            int predIndex = labelMap.get(currentPredictionLabel);
-            int goldIndex = labelMap.get(currentGoldLabel);
+            int predIndex = Label.getLabelsMap().get(currentPredictionLabel);
+            int goldIndex = Label.getLabelsMap().get(currentGoldLabel);
 
             //incement cells in confusionMatrix
             this.confusionMatrix[predIndex][goldIndex]++;
@@ -88,19 +65,9 @@ public class Evaluator {
             String currentPredictionLabel = yPred[i];
             String currentGoldLabel = yGold[i];
 
-            //add unseen labels to labelMap
-            if (!labelMap.keySet().contains(currentPredictionLabel)){
-                labels[labelsSeen] = currentPredictionLabel;
-                labelMap.put(currentPredictionLabel, labelsSeen++);
-            }
 
-            if (!labelMap.keySet().contains(currentGoldLabel)){
-                labels[labelsSeen] = currentGoldLabel;
-                labelMap.put(currentGoldLabel,labelsSeen++);
-            }
-
-            int predIndex = labelMap.get(currentPredictionLabel);
-            int goldIndex = labelMap.get(currentGoldLabel);
+            int predIndex = Label.getLabelsMap().get(currentPredictionLabel);
+            int goldIndex = Label.getLabelsMap().get(currentGoldLabel);
 
             //incement cells in confusionMatrix
             this.confusionMatrix[predIndex][goldIndex]++;
@@ -110,46 +77,40 @@ public class Evaluator {
         }
     }
 
-
     public void printEvalResults() {
 
-        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+        //Label.getLabelsMap()
+        //String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
+        ArrayList<String> labels = new ArrayList<>();
+        labels.addAll(Label.getLabelsMap().keySet());
 
+        System.out.println("***Class results");
         for (String label : labels) {
             System.out.println(label + " \tP = " + getPrecisionFor(label) + " R = " + getRecallFor(label) + " F-Score = " + getFScoreFor(label));
         }
-        System.out.println("***************");
-        System.out.println("for corpus , P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+        System.out.println("***Average results");
+
+        String macroResults = getPrecisionMacroAverage() +"/"
+                + getRecallMacroAverage() +"/"
+                + getFScoreMacroAverage();
+
+        String microResults = getPrecisionMicroAverage() +"/"
+                + getRecallMicroAverage() +"/"
+                + getFScoreMicroAverage();
+
+        System.out.println("Macro averages (P/R/F): "+macroResults);
+        System.out.println("Micro averages (P/R/F): "+microResults);
     }
 
     public void printConfusionMatrix(){
+        //String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
 
-        String[] labels = {"joy", "surprise", "sad", "fear", "anger", "disgust"};
-
-        System.out.println("Confusion Matrix");
-
-        for (String label : labels) {
-            System.out.print("\t"+label+"\t");
-        }
+        ArrayList<String> labels = new ArrayList<>();
+        labels.addAll(Label.getLabelsMap().keySet());
         System.out.println();
-
-        for (int i = 0; i < this.getConfusionMatrix().length; i++) {
-
-            double[] doubles = this.confusionMatrix[i];
-            for (double aDouble : doubles) {
-                System.out.print(aDouble+"\t");
-            }
-            System.out.println();
-        }
+        System.out.println("\tConfusion Matrix:");
+        ArrayMath.printArrayAsAligned(labels, this.confusionMatrix);
         System.out.println();
-    }
-
-
-    /**
-     * @return labels
-     */
-    public String[] getLabels(){
-        return this.labels;
     }
 
     /**
@@ -165,8 +126,7 @@ public class Evaluator {
      * @return precision
      */
     public double getPrecisionFor(String classLabel){
-        String currentLabel = classLabel;
-        int labelIndex = labelMap.get(classLabel);
+        int labelIndex = Label.getLabelsMap().get(classLabel);
         double truePositives = this.confusionMatrix[labelIndex][labelIndex];
         double numOfClassPredictions = this.confusionMatrix[labelIndex][numOfLabels]; //number of times currentLabel has been predicted
         if(numOfClassPredictions == 0)
@@ -178,12 +138,12 @@ public class Evaluator {
      * calculates average precision of all classes
      * @return
      */
-    public double getPrecisionAverage(){
+    public double getPrecisionMacroAverage(){
         double sum = 0;
-        for (String label : this.getLabels()) {
+        for (String label : Label.getLabelsMap().keySet()) {
             sum += getPrecisionFor(label);
         }
-        return sum/this.getLabels().length;
+        return sum/numOfLabels;
     }
 
     /**
@@ -193,7 +153,7 @@ public class Evaluator {
      */
     public double getRecallFor(String classLabel){
         String currentLabel = classLabel;
-        int labelIndex = labelMap.get(classLabel);
+        int labelIndex = Label.getLabelsMap().get(classLabel);
         double truePositives = this.confusionMatrix[labelIndex][labelIndex];
         double numOfClassGold = this.confusionMatrix[numOfLabels][labelIndex]; //number of times currentLabel occurs in gold
         if(numOfClassGold == 0)
@@ -205,12 +165,12 @@ public class Evaluator {
      * calculates average recall of all classes
      * @return
      */
-    public double getRecallAverage(){
+    public double getRecallMacroAverage(){
         double sum = 0;
-        for (String label : this.getLabels()) {
+        for (String label : Label.getLabelsMap().keySet()) {
             sum += getRecallFor(label);
         }
-        return sum/this.getLabels().length;
+        return sum/numOfLabels;
     }
 
     /**
@@ -227,12 +187,41 @@ public class Evaluator {
         return 2*(precision*recall)/(precision+recall);
     }
 
-    public double getFScoreAverage(){
+    public double getFScoreMacroAverage(){
         double sum = 0;
-        for (String label : this.getLabels()) {
+        for (String label : Label.getLabelsMap().keySet()) {
             sum += getFScoreFor(label);
         }
-        return sum/this.getLabels().length;
+        return sum/numOfLabels;
+    }
+
+    public double getPrecisionMicroAverage(){
+        double numerator = 0;
+        double denominator = 0;
+        for (int i = 0; i < numOfLabels; i++) {
+            numerator += confusionMatrix[i][i];
+            denominator += confusionMatrix[i][numOfLabels];
+        }
+        return numerator/denominator;
+    }
+
+    public double getRecallMicroAverage(){
+        double numerator = 0;
+        double denominator = 0;
+        for (int i = 0; i < numOfLabels; i++) {
+            numerator += confusionMatrix[i][i];
+            denominator += confusionMatrix[numOfLabels][i];
+        }
+        return numerator/denominator;
+
+    }
+
+    public double getFScoreMicroAverage(){
+        // (2ab)/(a+b)
+        double precision = getPrecisionMicroAverage();
+        double recall = getRecallMicroAverage();
+
+        return (precision * recall *2) / (precision + recall);
     }
 
 
