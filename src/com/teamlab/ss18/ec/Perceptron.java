@@ -43,15 +43,23 @@ public class Perceptron extends AbstractClassifier{
                     testEvaluator.printConfusionMatrix();
                 }
                 if (verbose > 0){
-                    System.out.println("\tTest Precision: "+testEvaluator.getPrecisionAverage());
-                    System.out.println("\tTest Recall: "+testEvaluator.getRecallAverage());
-                    System.out.println("\tTest Fscore: "+testEvaluator.getFScoreAverage());
+
+                    String macroResults = testEvaluator.getPrecisionMacroAverage() +"/"
+                            + testEvaluator.getRecallMacroAverage() +"/"
+                            + testEvaluator.getFScoreMacroAverage();
+
+                    String microResults = testEvaluator.getPrecisionMicroAverage() +"/"
+                            + testEvaluator.getRecallMicroAverage() +"/"
+                            + testEvaluator.getFScoreMicroAverage();
+
+                    System.out.println("\tTest Macro P/R/F: "+macroResults);
+                    System.out.println("\tTest Micro P/R/F: "+microResults);
+
                 }
 
                 System.out.println();
                 System.out.println("-----------------");
             }
-
         }
     }
 

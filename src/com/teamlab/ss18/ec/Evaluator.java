@@ -1,9 +1,6 @@
 package com.teamlab.ss18.ec;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -87,12 +84,22 @@ public class Evaluator {
         ArrayList<String> labels = new ArrayList<>();
         labels.addAll(Label.getLabelsMap().keySet());
 
+        System.out.println("***Class results");
         for (String label : labels) {
             System.out.println(label + " \tP = " + getPrecisionFor(label) + " R = " + getRecallFor(label) + " F-Score = " + getFScoreFor(label));
         }
-        System.out.println("***************");
-        System.out.println("Average: P = " + getPrecisionAverage() + " R = " + getRecallAverage() + "  F-Score = " + getFScoreAverage());
+        System.out.println("***Average results");
 
+        String macroResults = getPrecisionMacroAverage() +"/"
+                + getRecallMacroAverage() +"/"
+                + getFScoreMacroAverage();
+
+        String microResults = getPrecisionMicroAverage() +"/"
+                + getRecallMicroAverage() +"/"
+                + getFScoreMicroAverage();
+
+        System.out.println("Macro averages (P/R/F): "+macroResults);
+        System.out.println("Micro averages (P/R/F): "+microResults);
     }
 
     public void printConfusionMatrix(){
@@ -131,7 +138,7 @@ public class Evaluator {
      * calculates average precision of all classes
      * @return
      */
-    public double getPrecisionAverage(){
+    public double getPrecisionMacroAverage(){
         double sum = 0;
         for (String label : Label.getLabelsMap().keySet()) {
             sum += getPrecisionFor(label);
@@ -158,7 +165,7 @@ public class Evaluator {
      * calculates average recall of all classes
      * @return
      */
-    public double getRecallAverage(){
+    public double getRecallMacroAverage(){
         double sum = 0;
         for (String label : Label.getLabelsMap().keySet()) {
             sum += getRecallFor(label);
@@ -180,12 +187,41 @@ public class Evaluator {
         return 2*(precision*recall)/(precision+recall);
     }
 
-    public double getFScoreAverage(){
+    public double getFScoreMacroAverage(){
         double sum = 0;
         for (String label : Label.getLabelsMap().keySet()) {
             sum += getFScoreFor(label);
         }
         return sum/numOfLabels;
+    }
+
+    public double getPrecisionMicroAverage(){
+        double numerator = 0;
+        double denominator = 0;
+        for (int i = 0; i < numOfLabels; i++) {
+            numerator += confusionMatrix[i][i];
+            denominator += confusionMatrix[i][numOfLabels];
+        }
+        return numerator/denominator;
+    }
+
+    public double getRecallMicroAverage(){
+        double numerator = 0;
+        double denominator = 0;
+        for (int i = 0; i < numOfLabels; i++) {
+            numerator += confusionMatrix[i][i];
+            denominator += confusionMatrix[numOfLabels][i];
+        }
+        return numerator/denominator;
+
+    }
+
+    public double getFScoreMicroAverage(){
+        // (2ab)/(a+b)
+        double precision = getPrecisionMicroAverage();
+        double recall = getRecallMicroAverage();
+
+        return (precision * recall *2) / (precision + recall);
     }
 
 

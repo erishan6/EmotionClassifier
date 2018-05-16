@@ -101,7 +101,7 @@ public class Tweet {
         //String[] splitTweet = this.sentence.split(" ");
         String[] splitTweet = sentence.split(" ");
 
-        System.out.println(sentence);
+
         for (String token : splitTweet) {
             token = token.toLowerCase().trim();
             String punctuationRegex = "[.,;:\\-\\\\\\/!?&\"']";
@@ -115,10 +115,6 @@ public class Tweet {
                     this.features.add(newFeature);
         }
 
-        for (String feature : this.features) {
-            System.out.print(feature+" ");
-        }
-        System.out.println("\n_________________-");
     }
 
 

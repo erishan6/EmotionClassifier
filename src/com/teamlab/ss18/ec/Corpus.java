@@ -52,7 +52,6 @@ public class Corpus {
             tweetMap.put(currentTweet.getId(), currentTweet);
         }
 
-        //System.exit(0);
 
         tweets = tweetMap;
         return tweetMap;
