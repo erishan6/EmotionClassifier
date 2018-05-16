@@ -16,7 +16,7 @@ public class MainPerceptron {
         String trainFilePath = "data/full/train/train.csv";
         //String testFilePath = "data/full/test/test.csv";
         double trainPercentage = 0.8;
-        int epochs = 2;
+        int epochs = 100;
         boolean shuffle = true;
 
         /*
