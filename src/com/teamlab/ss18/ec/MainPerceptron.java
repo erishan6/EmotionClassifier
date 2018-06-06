@@ -13,7 +13,7 @@ public class MainPerceptron {
         * Set init parameters      *
         ****************************
         */
-        String trainFilePath = "data/full/train/train.csv";
+        String trainFilePath = "data/full/data_original";
         //String testFilePath = "data/full/test/test.csv";
         double trainPercentage = 0.8;
         int epochs = 100;
