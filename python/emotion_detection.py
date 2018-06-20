@@ -12,6 +12,7 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
     def label_to_one_hot(array):
         y_one_hot = []
         for label in array:
+            label = label.strip()
             one_hot_label = []
             if (label == "anger"):
                 one_hot_label = [1, 0, 0, 0, 0, 0]
@@ -23,7 +24,7 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
                 one_hot_label = [0, 0, 0, 1, 0, 0]
             elif (label == "sad"):
                 one_hot_label = [0, 0, 0, 0, 1, 0]
-            elif (one_hot_label == "surprise"):
+            elif (label == "surprise"):
                 one_hot_label = [0, 0, 0, 0, 0, 1]
             else:
                 one_hot_label = [0,0,0,0,0,0]
@@ -37,6 +38,7 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
 
     data_train = data[0:number_training_instances]
     y_train = label_to_one_hot(data_train[:,0])
+
     x_train = data_train[:,1]
 
     data_test = data[number_training_instances:]
@@ -93,8 +95,8 @@ if __name__ == "__main__":
     #CNN()
     #RNN()
 
-    #filename = "../data/full/data_original"
-    #load_data(filename)
+    filename = "../data/full/data_original"
+    load_data(filename)
 
 
 
