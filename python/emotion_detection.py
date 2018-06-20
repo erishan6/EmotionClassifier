@@ -77,17 +77,110 @@ def RNN(filename): #TODO: DENIZ
     y_pred = []
     return y_gold, y_pred
 
-def evaluate(y_gold, y_pred): #TODO: DENIZ
+def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
+    '''
+    returns precision, recall and fscore
+    :param y_gold:
+    :param y_pred:
+    :param verbose: if greater 0 prec, recall and f for all labels are additionally returned
+    :return:
+    '''
 
     gold_counts_arrs = np.unique(y_gold, return_counts=True)
     pred_counts_arrs = np.unique(y_pred, return_counts=True)
 
+    number_of_instances = len(y_gold)
     gold_counts_dict = dict(zip(gold_counts_arrs[0], gold_counts_arrs[1]))
     pred_counts_dict = dict(zip(pred_counts_arrs[0], pred_counts_arrs[1]))
 
-    print(gold_counts_dict)
+#    print(gold_counts_dict)
+#    print(pred_counts_dict)
 
-    evaluation = ""
+    labels = np.unique(y_gold)
+    tp_counts = np.zeros(len(labels))
+
+    tp_dict = dict(zip(labels, tp_counts)) #dictionary that has labels as key and the number of true positives for this label
+
+    for i in range(len(y_gold)):
+        if (y_gold[i] == y_pred[i]):
+            tp_dict[y_gold[i]] += 1
+
+
+
+
+    def calculate_precisions():
+        precision_dict = dict()
+        for label in tp_dict:
+            number_of_tp_for_current_label = tp_dict[label]
+            tp_plus_fp_for_current_label = pred_counts_dict[label]
+
+            if (tp_plus_fp_for_current_label == 0):
+                precision_dict[label] = 0
+            else:
+                precision_dict[label] = number_of_tp_for_current_label / tp_plus_fp_for_current_label
+        return precision_dict
+
+    def calculate_recalls():
+        recall_dict = dict()
+        for label in tp_dict:
+            number_of_tp_for_current_label = tp_dict[label]
+            tp_plus_fn_for_current_label = gold_counts_dict[label]
+
+            if (tp_plus_fn_for_current_label == 0):
+                recall_dict[label] = 0
+            else:
+                recall_dict[label] = number_of_tp_for_current_label / tp_plus_fn_for_current_label
+
+        return recall_dict
+
+
+    def calculate_f_scores():
+        f_dict = dict()
+        precisions = calculate_precisions()
+        recalls = calculate_recalls()
+
+        for label in tp_dict:
+            precision = precisions[label]
+            recall = recalls[label]
+
+            if recall == 0 or precision == 0:
+                f = 0
+            else:
+                f = (2 * precision * recall) / (precision + recall)
+
+            f_dict[label] = f
+
+        return f_dict
+
+    def calculate_macro_precision():
+        return np.mean(np.array(list(calculate_precisions().values()), dtype=float))
+
+    def calculate_macro_recall():
+        return np.mean(np.array(list(calculate_recalls().values()), dtype=float))
+
+    def calculate_macro_f():
+        return np.mean(np.array(list(calculate_f_scores().values()), dtype=float))
+
+
+    p = round(calculate_macro_precision(),2)
+    r = round(calculate_macro_recall(), 2)
+    f = round(calculate_macro_f(), 2)
+    evaluation = "Macro:\tr: {}\tr: {}\tf: {}".format(p,r,f)
+
+
+    if (verbose > 0):
+        evaluation += "\n"
+        ps = calculate_precisions()
+
+        rs = calculate_recalls()
+        fs = calculate_f_scores()
+
+        for label in ps:
+            p = round(ps[label],2)
+            r = round(rs[label],2)
+            f = round(fs[label],2)
+            evaluation += "{}:\tp: {}\tr: {}\tf: {}\n".format(label, p,r,f)
+
     return evaluation
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
@@ -121,7 +214,9 @@ if __name__ == "__main__":
 
 
 
-    y_gold = [1, 2, 2, 1, 1, 1, 3]
-    y_pred = [1, 2, 1, 1, 3, 3, 1]
+    y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
+    y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
 
-    evaluate(y_gold, y_pred)
+    e = evaluate(y_gold, y_pred, verbose = 1)
+
+    print(e)
