@@ -8,6 +8,8 @@ import datetime
 import emotion_detection
 from tensorflow.contrib import learn
 import csv
+import re
+import emoji
 
 # Parameters
 # ==================================================
@@ -39,9 +41,16 @@ print("")
 if FLAGS.eval_train:
     x_text, y, x_raw, y_test = emotion_detection.load_data("../data/full/data_original")
     y_test = np.argmax(y_test, axis=1)
+    print(y_test)
 else:
     x_raw = ["a masterpiece four years in the making", "everything is off."]
     y_test = [1, 0]
+
+rx = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
+for text in x_raw:
+    text = emoji.demojize(text)
+    text = re.sub(rx, " ", text)
+    text = re.sub(r"\s+"," ", text)
 
 # Map data into vocabulary
 vocab_path = os.path.join(FLAGS.checkpoint_dir, "..", "vocab")
@@ -88,6 +97,7 @@ with graph.as_default():
 # Print accuracy if y_test is defined
 if y_test is not None:
     correct_predictions = float(sum(all_predictions == y_test))
+    print("Correct Predictions : {}".format(correct_predictions))
     print("Total number of test examples: {}".format(len(y_test)))
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
 
