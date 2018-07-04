@@ -50,16 +50,19 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
 
     return x_train, y_train, x_test, y_test
 
-def create_vocabmapping(x_train): #TODO: ISHAN
+def create_vocabmapping(x_train): #TODO: DENIZ
     '''
     this function creates a lexicon (embedding) from x (tweets)
     :param x: a list of tweets
     :return: word embedding matrix
     '''
-    matrix = []
-    return matrix
 
-def get_embedding_for(sentence): #TODO: ISHAN
+
+
+    matrix = []
+    return matrix #change
+
+def get_embedding_for(sentence): #TODO: DENIZ
     embedding = [] #matrix
     return embedding
 
@@ -72,9 +75,9 @@ def CNN(filename): #TODO: ISHAN
     y_pred = []
     return y_gold, y_pred
 
-def RNN(filename): #TODO: DENIZ
+def RNN(train_filename, test_filename): #TODO: DENIZ
     x_train, y_train, x_test, y_test = load_data(filename)
-    embedding = create_vocabmapping(x_train)
+    vocabulary_mapping = create_vocabmapping(x_train)
 
     y_gold = []
     y_pred = []
