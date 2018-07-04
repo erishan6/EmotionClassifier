@@ -56,13 +56,6 @@ print("activation_function=" + str(FLAGS.activation_function))
 print("Loading data...")
 x_text, y, x_test, y_test = emotion_detection.load_data("../data/full/data_original")
 # print(y)
-rx = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
-for text in x_text:
-    text = emoji.demojize(text)
-    text = re.sub(rx, " ", text)
-    text = re.sub(r"\s+"," ", text)
-    # print(text)
-    # break
 
 y = np.array(y)
 # Build vocabulary

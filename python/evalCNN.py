@@ -46,12 +46,6 @@ else:
     x_raw = ["a masterpiece four years in the making", "everything is off."]
     y_test = [1, 0]
 
-rx = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
-for text in x_raw:
-    text = emoji.demojize(text)
-    text = re.sub(rx, " ", text)
-    text = re.sub(r"\s+"," ", text)
-
 # Map data into vocabulary
 vocab_path = os.path.join(FLAGS.checkpoint_dir, "..", "vocab")
 vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)

@@ -1,6 +1,6 @@
 import numpy as np
-
-
+import emoji
+import re
 
 def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
     '''
@@ -40,14 +40,17 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
     y_train = label_to_one_hot(data_train[:,0])
 
     x_train = data_train[:,1]
+    x_train = [parsingText(x) for x in x_train]
+
 
     data_test = data[number_training_instances:]
     y_test = label_to_one_hot(data_test[:,0])
     x_test = data_test[:,1]
+    x_test = [parsingText(x) for x in x_test]
 
     return x_train, y_train, x_test, y_test
 
-def create_embeddings(x_train): #TODO: ISHAN
+def create_vocabmapping(x_train): #TODO: ISHAN
     '''
     this function creates a lexicon (embedding) from x (tweets)
     :param x: a list of tweets
@@ -62,7 +65,7 @@ def get_embedding_for(sentence): #TODO: ISHAN
 
 def CNN(filename): #TODO: ISHAN
     x_train, y_train, x_test, y_test = load_data(filename)
-    embedding = create_embeddings(x_train)
+    embedding = create_vocabmapping(x_train)
 
 
     y_gold = []
@@ -71,7 +74,7 @@ def CNN(filename): #TODO: ISHAN
 
 def RNN(filename): #TODO: DENIZ
     x_train, y_train, x_test, y_test = load_data(filename)
-    embedding = create_embeddings(x_train)
+    embedding = create_vocabmapping(x_train)
 
     y_gold = []
     y_pred = []
@@ -203,6 +206,12 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
             end_index = min((batch_num + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
 
+def parsingText(text):
+    rx = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
+    text = emoji.demojize(text)
+    text = re.sub(rx, " ", text)
+    text = re.sub(r"\s+", " ", text)
+    return text
 
 if __name__ == "__main__":
 
