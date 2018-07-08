@@ -33,6 +33,7 @@ recurrent_dropout = 0.2
 
 print('Loading data...')
 (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=total_number_of_words)
+print(x_train)
 
 print(len(x_train), 'train sequences')
 print(len(x_test), 'test sequences')
@@ -40,6 +41,7 @@ print(len(x_test), 'test sequences')
 print('Pad sequences (samples x time)')
 
 num_of_samples = 25000
+num_of_samples = 500
 x_train = sequence.pad_sequences(x_train[0:num_of_samples], maxlen=max_sentence_length)
 y_train = y_train[0:num_of_samples]
 

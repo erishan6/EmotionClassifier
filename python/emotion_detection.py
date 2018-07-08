@@ -2,6 +2,9 @@ import numpy as np
 import emoji
 import re
 
+from tensorflow.contrib import learn
+
+
 def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
     '''
     this function reads a file and seperates labels from sentences and creates a train-test-split
@@ -40,27 +43,48 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
     y_train = label_to_one_hot(data_train[:,0])
 
     x_train = data_train[:,1]
-    x_train = [parsingText(x) for x in x_train]
 
+    x_train = [preprocess_tweet(x) for x in x_train]
 
     data_test = data[number_training_instances:]
     y_test = label_to_one_hot(data_test[:,0])
     x_test = data_test[:,1]
-    x_test = [parsingText(x) for x in x_test]
+    x_test = [preprocess_tweet(x) for x in x_test]
 
     return x_train, y_train, x_test, y_test
 
-def create_vocabmapping(x_train): #TODO: DENIZ
+def create_vocabmapping(tweets): #TODO: DENIZ
     '''
-    this function creates a lexicon (embedding) from x (tweets)
-    :param x: a list of tweets
+    this function creates a lexicon (embedding) from tweet (tweets)
+    each tweet is cut or padded to a uniform length
+    uniform length is calculated by adding the mean tweet length to the standard dev of document lengths (following Neumann and Vu 2017)
+    :param tweets: a list of tweets
     :return: word embedding matrix
     '''
 
+    doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
 
+    print("number of docs", end=":")
 
-    matrix = []
-    return matrix #change
+    mean_doc_length = np.mean(doc_lengths)
+    std_doc_length = np.std(doc_lengths)
+    print(mean_doc_length)
+    print(std_doc_length)
+    meanlength_plus_stdlength = mean_doc_length + std_doc_length
+
+    # longer_stdPlusMean = 0
+    # for tweet in tweets:
+    #     if len(tweet.split(" ")) > meanlength_plus_stdlength:
+    #         longer_stdPlusMean += 1
+    #
+    # print("longer std_plus_mean", end=":")
+    # print(longer_stdPlusMean)
+
+    max_document_length = int(meanlength_plus_stdlength)
+    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
+    matrix = np.array(list(vocab_processor.fit_transform(tweets)))
+
+    return matrix
 
 def get_embedding_for(sentence): #TODO: DENIZ
     embedding = [] #matrix
@@ -78,6 +102,7 @@ def CNN(filename): #TODO: ISHAN
 def RNN(train_filename, test_filename): #TODO: DENIZ
     x_train, y_train, x_test, y_test = load_data(filename)
     vocabulary_mapping = create_vocabmapping(x_train)
+
 
     y_gold = []
     y_pred = []
@@ -209,11 +234,15 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
             end_index = min((batch_num + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
 
-def parsingText(text):
-    rx = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
+def preprocess_tweet(text):
+    #regex removing "everything" except ! and &
+    regex_pattern = "\W*(\@USERNAME)|\W*(\[#TRIGGERWORD#\])|\W*(\[NEWLINE\])|\W*(http:\/\/url.removed)\W*|\W*(#)\W*|\-|\%|\,|\.|\[|\^|\$|\\|\?|\*|\+|\(|\)|\|\;|\:|\<|\>|\_|\""
+
+    #regex removing "everything" except TRIGGERWORD
+    regex_pattern = "\\W*(\\@USERNAME)|\\W*(\\[NEWLINE\\])|\\W*(http://url.removed)\\W*|\\W*(#)\\W*|\\-|\\%|\\&|\\,|\\.|\\[|\\^|\\$|\\\\|\\?|\\!|\\*|\\+|\\(|\\)|\\|\\;|\\:|\\<|\\>|\\_|\\\""
     text = emoji.demojize(text)
-    text = re.sub(rx, " ", text)
-    text = re.sub(r"\s+", " ", text)
+    text = re.sub(regex_pattern, " ", text)
+    text = re.sub(r"\s+", " ", text).strip().lower()
     return text
 
 if __name__ == "__main__":
@@ -221,14 +250,34 @@ if __name__ == "__main__":
     #CNN()
     #RNN()
 
-    filename = "../data/full/data_original"
-    load_data(filename)
+    #filename = "../data/full/data_original"
+    filename = "../data/small/trial.csv"
+    data,_,_,_ = load_data(filename)
+
+    ##########################
+    ### SET GENERAL PARAMS ###
+    ##########################
+    total_number_of_words = 20000
+    max_sentence_length = 80  # cut texts after this number of words (among top max_features most common words)
+    batch_size = 32
+    epochs = 2
+
+    ##########################
+    ### SET NETWORK PARAMS ###
+    ##########################
+    number_of_labels = 2
+    length_of_dense_embedding = 128
+    dropout = 0.2
+    recurrent_dropout = 0.2
 
 
 
-    y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
-    y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
 
-    e = evaluate(y_gold, y_pred, verbose = 1)
 
-    print(e)
+    # y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
+    # y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
+    # e = evaluate(y_gold, y_pred, verbose = 1)
+    # print(e)
+
+
+
