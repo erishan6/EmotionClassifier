@@ -1,28 +1,30 @@
 Intro:
     Research Question
-    Why is it relevant?
+    Why is it relevant? examples (1. implicit, 2. explicit to make clear)
 
-Datasets:
-    Size
-    type of data
-        mode
-        source
-
-Methods:
+Methods: (~1 page)
     Baseline (Perceptron, NB)
-    CNN description
-    RNN description
+    CNN description (formal explanation) convince that we understood
+    RNN description (formal explanation)
     Embeddings
 
-Parameters:
-    number of filters
-    number of layers
-    dropouts
-    activations
-    optimizer
-    etc.
 
 Experiments:
+    setting:
+        map experiments to Rquest
+        Parameters:
+            number of filters
+            number of layers
+            dropouts
+            activations
+            optimizer
+            etc.
+        Datasets:
+            Size
+            type of data
+                mode
+                source
+    tweak 2 different hyperparams and run both datasets
     implicit emotion word recognition setup
     explicit emotion word recognition setup
 

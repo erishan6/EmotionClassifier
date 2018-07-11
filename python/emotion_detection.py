@@ -88,9 +88,14 @@ def create_vocabmapping(tweets, training = True): #TODO: DENIZ
 
         doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
 
+
         mean_doc_length = np.mean(doc_lengths)
+
         std_doc_length = np.std(doc_lengths)
+
         meanlength_plus_stdlength = mean_doc_length + std_doc_length
+
+
 
         global_max_document_length = int(meanlength_plus_stdlength)
         global_vocab_processor = learn.preprocessing.VocabularyProcessor(global_max_document_length)
@@ -138,7 +143,7 @@ def RNN(train_filename, test_filename): #TODO: DENIZ
     ##########################
 
     batch_size = 32
-    epochs = 10
+    epochs = 100
 
     ##########################
     ### SET NETWORK PARAMS ###
@@ -184,14 +189,15 @@ def RNN(train_filename, test_filename): #TODO: DENIZ
     score, acc = model.evaluate(x_test, y_test,
                                 batch_size=batch_size)
 
+    print("final acc: ", end=": ")
     print(acc)
     predictions = model.predict(x_test)
-    print(predictions)
+    #print(predictions)
     y_pred = [np.argmax(pred) for pred in predictions]
     y_gold = [np.argmax(gold) for gold in y_test]
 
-    print(y_pred)
-    print(y_gold)
+    #print(y_pred)
+    #print(y_gold)
 
     return y_gold, y_pred
 
@@ -206,6 +212,9 @@ def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
 
     gold_counts_arrs = np.unique(y_gold, return_counts=True)
     pred_counts_arrs = np.unique(y_pred, return_counts=True)
+
+
+#TODO: change this to read all classes even if not every class was predicted
 
     number_of_instances = len(y_gold)
     gold_counts_dict = dict(zip(gold_counts_arrs[0], gold_counts_arrs[1]))
@@ -230,6 +239,8 @@ def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
         precision_dict = dict()
         for label in tp_dict:
             number_of_tp_for_current_label = tp_dict[label]
+            print(label)
+            print(pred_counts_dict)
             tp_plus_fp_for_current_label = pred_counts_dict[label]
 
             if (tp_plus_fp_for_current_label == 0):
@@ -345,15 +356,8 @@ if __name__ == "__main__":
 
     y_gold, y_pred = RNN(filename_train, filename_test)
 
-
-
-
-
-
-    y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
-    y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
-    e = evaluate(y_gold, y_pred, verbose = 1)
-    print(e)
+    #evaluation = evaluate(y_gold, y_pred, verbose = 1)
+    #print(evaluate)
 
 
 
