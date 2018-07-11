@@ -1,0 +1,31 @@
+Intro:
+    Research Question
+    Why is it relevant?
+
+Datasets:
+    Size
+    type of data
+        mode
+        source
+
+Methods:
+    Baseline (Perceptron, NB)
+    CNN description
+    RNN description
+    Embeddings
+
+Parameters:
+    number of filters
+    number of layers
+    dropouts
+    activations
+    optimizer
+    etc.
+
+Experiments:
+    implicit emotion word recognition setup
+    explicit emotion word recognition setup
+
+Results:
+    Quantitative analysis (Recall, Precision, F)
+    Qualitative error analysis

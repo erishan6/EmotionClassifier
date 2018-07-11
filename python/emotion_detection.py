@@ -4,11 +4,19 @@ import re
 
 from tensorflow.contrib import learn
 
+from keras.models import Sequential
+from keras.layers import Dense, Embedding
+from keras.layers import LSTM
 
-def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
+np.set_printoptions(linewidth=100,)
+
+global_vocab_processor = None
+global_max_document_length = 0
+
+def load_data(filename, training = True): #TODO: DENIZ
     '''
     this function reads a file and seperates labels from sentences and creates a train-test-split
-    :param filename:
+    :param test_filename:
     :return:
     '''
 
@@ -35,25 +43,25 @@ def load_data(filename, train_ratio = 0.7): #TODO: DENIZ
 
         return np.array(y_one_hot)
 
-    data = np.loadtxt(filename, delimiter="\t", dtype=str, comments=None)
+    if training:
+        print(">>> loading training data...")
+    else:
+        print(">>> loading test data...")
 
-    number_training_instances = int(train_ratio * data.shape[0])
+    data_train = np.loadtxt(filename, delimiter="\t", dtype=str, comments=None)
 
-    data_train = data[0:number_training_instances]
-    y_train = label_to_one_hot(data_train[:,0])
+    y = label_to_one_hot(data_train[:,0])
+    x = data_train[:,1]
+    x = [preprocess_tweet(x) for x in x]
+    number_of_train_instances = len(x)
+    #print(number_of_train_instances)
 
-    x_train = data_train[:,1]
+    x = create_vocabmapping(x, training=training)
 
-    x_train = [preprocess_tweet(x) for x in x_train]
 
-    data_test = data[number_training_instances:]
-    y_test = label_to_one_hot(data_test[:,0])
-    x_test = data_test[:,1]
-    x_test = [preprocess_tweet(x) for x in x_test]
+    return x, y
 
-    return x_train, y_train, x_test, y_test
-
-def create_vocabmapping(tweets): #TODO: DENIZ
+def create_vocabmapping(tweets, training = True): #TODO: DENIZ
     '''
     this function creates a lexicon (embedding) from tweet (tweets)
     each tweet is cut or padded to a uniform length
@@ -61,34 +69,58 @@ def create_vocabmapping(tweets): #TODO: DENIZ
     :param tweets: a list of tweets
     :return: word embedding matrix
     '''
+    global global_vocab_processor
+    global global_max_document_length
 
-    doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
+    if training:
+        print(">>> creating training vocabulary mapping...")
+    else:
+        print(">>> creating test vocabulary mapping...")
 
-    print("number of docs", end=":")
 
-    mean_doc_length = np.mean(doc_lengths)
-    std_doc_length = np.std(doc_lengths)
-    print(mean_doc_length)
-    print(std_doc_length)
-    meanlength_plus_stdlength = mean_doc_length + std_doc_length
+    if(global_vocab_processor == None and not training):
+        print(">>> ERROR: trying to create embedding for testset before creating dictionary using training data")
+        print(">>> SOLUTION: call create_vocabmapping() with training data first")
+        print(">>> EXIT: program terminated")
+        exit(0)
 
-    # longer_stdPlusMean = 0
-    # for tweet in tweets:
-    #     if len(tweet.split(" ")) > meanlength_plus_stdlength:
-    #         longer_stdPlusMean += 1
-    #
-    # print("longer std_plus_mean", end=":")
-    # print(longer_stdPlusMean)
+    if training: #create new vocab_processor using training data
 
-    max_document_length = int(meanlength_plus_stdlength)
-    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-    matrix = np.array(list(vocab_processor.fit_transform(tweets)))
+        doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
+
+        mean_doc_length = np.mean(doc_lengths)
+        std_doc_length = np.std(doc_lengths)
+        meanlength_plus_stdlength = mean_doc_length + std_doc_length
+
+        global_max_document_length = int(meanlength_plus_stdlength)
+        global_vocab_processor = learn.preprocessing.VocabularyProcessor(global_max_document_length)
+
+        matrix = np.array(list(global_vocab_processor.fit_transform(tweets)))
+
+
+    else: #use existing
+        vocab_dict = global_vocab_processor.vocabulary_._mapping
+
+        #replace words with indices
+        matrix = [[vocab_dict[word] if word in vocab_dict else 0 for word in tweet.split(" ") ] for tweet in tweets]
+
+        padded_tweets = []
+        for tweet in matrix:
+            tweet_length = len(tweet)
+
+            if tweet_length > global_max_document_length:
+                tweet_padded = np.array(tweet[:global_max_document_length])
+            else:
+                zero = np.zeros(global_max_document_length, dtype=int)
+                zero[:tweet_length] = tweet
+                tweet_padded = zero
+
+            padded_tweets.append(tweet_padded)
+        matrix = np.array(padded_tweets)
+
 
     return matrix
 
-def get_embedding_for(sentence): #TODO: DENIZ
-    embedding = [] #matrix
-    return embedding
 
 def CNN(filename): #TODO: ISHAN
     x_train, y_train, x_test, y_test = load_data(filename)
@@ -100,12 +132,67 @@ def CNN(filename): #TODO: ISHAN
     return y_gold, y_pred
 
 def RNN(train_filename, test_filename): #TODO: DENIZ
-    x_train, y_train, x_test, y_test = load_data(filename)
-    vocabulary_mapping = create_vocabmapping(x_train)
 
+    ##########################
+    ### SET GENERAL PARAMS ###
+    ##########################
 
-    y_gold = []
-    y_pred = []
+    batch_size = 32
+    epochs = 10
+
+    ##########################
+    ### SET NETWORK PARAMS ###
+    ##########################
+
+    number_of_labels = 6
+    length_of_dense_embedding = 128
+    dropout = 0.2
+    recurrent_dropout = 0.2
+
+    #################
+    ### LOAD DATA ###
+    #################
+
+    x_train, y_train = load_data(train_filename, training=True)
+    x_test, y_test = load_data(test_filename, training=False)
+
+    total_number_of_words = len(global_vocab_processor.vocabulary_._mapping)
+
+    #############
+    ### MODEL ###
+    #############
+
+    print('>>> building model...')
+    model = Sequential()
+    model.add(Embedding(total_number_of_words, length_of_dense_embedding))
+    model.add(LSTM(length_of_dense_embedding, dropout=dropout, recurrent_dropout=recurrent_dropout))
+    model.add(Dense(number_of_labels, activation='softmax'))
+
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
+
+    print('>>> training...')
+    model.fit(x_train, y_train,
+              batch_size=batch_size,
+              epochs=epochs,
+              validation_data=(x_test, y_test),
+              shuffle=True,
+              verbose=2)
+
+    print('>>> evaluate...')
+    score, acc = model.evaluate(x_test, y_test,
+                                batch_size=batch_size)
+
+    print(acc)
+    predictions = model.predict(x_test)
+    print(predictions)
+    y_pred = [np.argmax(pred) for pred in predictions]
+    y_gold = [np.argmax(gold) for gold in y_test]
+
+    print(y_pred)
+    print(y_gold)
+
     return y_gold, y_pred
 
 def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
@@ -248,36 +335,25 @@ def preprocess_tweet(text):
 if __name__ == "__main__":
 
     #CNN()
-    #RNN()
 
-    #filename = "../data/full/data_original"
-    filename = "../data/small/trial.csv"
-    data,_,_,_ = load_data(filename)
+    filename_train = "../data/full/data_original"
+    filename_test = "../data/small/trial.csv"
 
-    ##########################
-    ### SET GENERAL PARAMS ###
-    ##########################
-    total_number_of_words = 20000
-    max_sentence_length = 80  # cut texts after this number of words (among top max_features most common words)
-    batch_size = 32
-    epochs = 2
+    #filename_train = "../data/full/test/test1.csv"
+    #filename_test = "../data/full/test/test2.csv"
 
-    ##########################
-    ### SET NETWORK PARAMS ###
-    ##########################
-    number_of_labels = 2
-    length_of_dense_embedding = 128
-    dropout = 0.2
-    recurrent_dropout = 0.2
+
+    y_gold, y_pred = RNN(filename_train, filename_test)
 
 
 
 
 
-    # y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
-    # y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
-    # e = evaluate(y_gold, y_pred, verbose = 1)
-    # print(e)
+
+    y_gold = [1, 2, 2, 1, 1, 1, 3, 1,1, 1, 1, 1, 2]
+    y_pred = [1, 2, 1, 1, 3, 3, 1, 2, 2, 2, 2, 1, 2]
+    e = evaluate(y_gold, y_pred, verbose = 1)
+    print(e)
 
 
 

@@ -59,9 +59,9 @@ x_text, y, x_test, y_test = emotion_detection.load_data("../data/full/data_origi
 
 y = np.array(y)
 # Build vocabulary
-max_document_length = max([len(x.split(" ")) for x in x_text])
-vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-x = np.array(list(vocab_processor.fit_transform(x_text)))
+global_max_document_length = max([len(x.split(" ")) for x in x_text])
+global_vocab_processor = learn.preprocessing.VocabularyProcessor(global_max_document_length)
+x = np.array(list(global_vocab_processor.fit_transform(x_text)))
 print(x)
 
 # Randomly shuffle data
@@ -78,7 +78,7 @@ y_train, y_dev = y_shuffled[:dev_sample_index], y_shuffled[dev_sample_index:]
 
 del x, y, x_shuffled, y_shuffled
 
-print("Vocabulary Size: {:d}".format(len(vocab_processor.vocabulary_)))
+print("Vocabulary Size: {:d}".format(len(global_vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
 
@@ -92,7 +92,7 @@ with tf.Graph().as_default():
         cnn = Network(
             sequence_length=x_train.shape[1],
             num_classes=y_train.shape[1],
-            vocab_size=len(vocab_processor.vocabulary_),
+            vocab_size=len(global_vocab_processor.vocabulary_),
             embedding_size=FLAGS.embedding_dim,
             filter_sizes=list(map(int, FLAGS.filter_sizes.split(","))),
             num_filters=FLAGS.num_filters,
@@ -128,7 +128,7 @@ with tf.Graph().as_default():
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)
         # Write vocabulary
-        vocab_processor.save(os.path.join(out_dir, "vocab"))
+        global_vocab_processor.save(os.path.join(out_dir, "vocab"))
 
         # Summaries for loss and accuracy
         loss_summary = tf.summary.scalar("loss", loss_equation)
