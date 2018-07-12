@@ -136,70 +136,6 @@ def CNN(filename): #TODO: ISHAN
     y_pred = []
     return y_gold, y_pred
 
-def RNN(train_filename, test_filename): #TODO: DENIZ
-
-    ##########################
-    ### SET GENERAL PARAMS ###
-    ##########################
-
-    batch_size = 32
-    epochs = 100
-
-    ##########################
-    ### SET NETWORK PARAMS ###
-    ##########################
-
-    number_of_labels = 6
-    length_of_dense_embedding = 128
-    dropout = 0.2
-    recurrent_dropout = 0.2
-
-    #################
-    ### LOAD DATA ###
-    #################
-
-    x_train, y_train = load_data(train_filename, training=True)
-    x_test, y_test = load_data(test_filename, training=False)
-
-    total_number_of_words = len(global_vocab_processor.vocabulary_._mapping)
-
-    #############
-    ### MODEL ###
-    #############
-
-    print('>>> building model...')
-    model = Sequential()
-    model.add(Embedding(total_number_of_words, length_of_dense_embedding))
-    model.add(LSTM(length_of_dense_embedding, dropout=dropout, recurrent_dropout=recurrent_dropout))
-    model.add(Dense(number_of_labels, activation='softmax'))
-
-    model.compile(loss='binary_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
-
-    print('>>> training...')
-    model.fit(x_train, y_train,
-              batch_size=batch_size,
-              epochs=epochs,
-              validation_data=(x_test, y_test),
-              shuffle=True,
-              verbose=2)
-
-    print('>>> evaluate...')
-    score, acc = model.evaluate(x_test, y_test,
-                                batch_size=batch_size)
-
-    print("final acc: ", end=": ")
-    print(acc)
-    predictions = model.predict(x_test)
-    #print(predictions)
-    y_pred = [np.argmax(pred) for pred in predictions]
-    y_gold = [np.argmax(gold) for gold in y_test]
-
-    #print(y_pred)
-    #print(y_gold)
-
-    return y_gold, y_pred
 
 def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
     '''
@@ -214,14 +150,17 @@ def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
     pred_counts_arrs = np.unique(y_pred, return_counts=True)
 
 
-#TODO: change this to read all classes even if not every class was predicted
+    #TODO: change this to read all classes even if not every class was predicted
 
     number_of_instances = len(y_gold)
     gold_counts_dict = dict(zip(gold_counts_arrs[0], gold_counts_arrs[1]))
     pred_counts_dict = dict(zip(pred_counts_arrs[0], pred_counts_arrs[1]))
 
-#    print(gold_counts_dict)
-#    print(pred_counts_dict)
+    for i in range(len(gold_counts_arrs[0])):
+        if(not i in pred_counts_dict.keys()):
+            pred_counts_dict[i] = 0
+
+
 
     labels = np.unique(y_gold)
     tp_counts = np.zeros(len(labels))
@@ -233,14 +172,12 @@ def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
             tp_dict[y_gold[i]] += 1
 
 
-
-
     def calculate_precisions():
         precision_dict = dict()
         for label in tp_dict:
             number_of_tp_for_current_label = tp_dict[label]
-            print(label)
-            print(pred_counts_dict)
+            #print(label)
+            #print(pred_counts_dict)
             tp_plus_fp_for_current_label = pred_counts_dict[label]
 
             if (tp_plus_fp_for_current_label == 0):
@@ -294,7 +231,7 @@ def evaluate(y_gold, y_pred, verbose = 0): #TODO: DENIZ
     p = round(calculate_macro_precision(),2)
     r = round(calculate_macro_recall(), 2)
     f = round(calculate_macro_f(), 2)
-    evaluation = "Macro:\tr: {}\tr: {}\tf: {}".format(p,r,f)
+    evaluation = "Macro:\tp: {}\tr: {}\tf: {}".format(p,r,f)
 
 
     if (verbose > 0):
@@ -343,21 +280,125 @@ def preprocess_tweet(text):
     text = re.sub(r"\s+", " ", text).strip().lower()
     return text
 
+
+def RNN(train_filename, test_filename): #TODO: DENIZ
+
+    def get_current_time():
+
+        import datetime
+        seperator = "_"
+
+        now = datetime.datetime.now()
+
+        year = str(now.year)
+        month = str(now.month)
+        day = str(now.day)
+        hour = str(now.hour)
+        min = str(now.minute)
+        second = str(now.second)
+
+        time = year + seperator + month + seperator + day + seperator + hour + seperator + min + seperator + second
+        return time
+
+    def get_callback_list():
+        from keras import callbacks  # import ModelCheckpoint
+
+        current_time = get_current_time()
+        filepath = "weights_bestmodel_{}.hdf5".format(current_time)
+        callback_model_checkpoint = callbacks.ModelCheckpoint(filepath, monitor='val_acc', verbose=0,
+                                                              save_best_only=True,
+                                                              mode='max')
+        callback_stop_training = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=3, verbose=1,
+                                                         mode='auto')
+        filename = "logger_{}.csv".format(current_time)
+        callback_csv_logger = callbacks.CSVLogger(filename, separator=',', append=False)
+
+        return [callback_model_checkpoint, callback_stop_training, callback_csv_logger]
+
+
+    ##########################
+    ### SET GENERAL PARAMS ###
+    ##########################
+
+    batch_size = 32
+    max_epochs = 200
+
+    ##########################
+    ### SET NETWORK PARAMS ###
+    ##########################
+
+    number_of_labels = 6
+    length_of_dense_embedding = 128
+    dropout = 0.2
+    recurrent_dropout = 0.2
+
+    #################
+    ### LOAD DATA ###
+    #################
+
+    x_train, y_train = load_data(train_filename, training=True)
+    x_test, y_test = load_data(test_filename, training=False)
+
+    total_number_of_words = len(global_vocab_processor.vocabulary_._mapping)
+
+    #############
+    ### MODEL ###
+    #############
+
+    print('>>> building model...')
+    model = Sequential()
+    model.add(Embedding(total_number_of_words, length_of_dense_embedding))
+    model.add(LSTM(length_of_dense_embedding, dropout=dropout, recurrent_dropout=recurrent_dropout))
+    model.add(Dense(number_of_labels, activation='softmax'))
+
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
+
+    print('>>> training...')
+    model.fit(x_train, y_train,
+              batch_size=batch_size,
+              epochs=max_epochs,
+              validation_data=(x_test, y_test),
+              shuffle=True,
+              verbose=2,
+              callbacks=get_callback_list())
+
+    print('>>> evaluate...')
+    score, acc = model.evaluate(x_test, y_test,
+                                batch_size=batch_size)
+
+    print("final acc: ", end=": ")
+    print(acc)
+    predictions = model.predict(x_test, verbose=1, batch_size=batch_size)
+    #print(predictions)
+    y_pred = [np.argmax(pred) for pred in predictions]
+    y_gold = [np.argmax(gold) for gold in y_test]
+
+    #print()
+    #print(y_pred)
+    #print(y_gold)
+
+    return y_gold, y_pred
+
+
 if __name__ == "__main__":
 
     #CNN()
 
-    filename_train = "../data/full/data_original"
-    filename_test = "../data/small/trial.csv"
+    #filename_train = "../data/full/data_original"
+    #filename_test = "../data/small/trial.csv"
 
-    #filename_train = "../data/full/test/test1.csv"
-    #filename_test = "../data/full/test/test2.csv"
+    filename_train = "../data/full/test/test1.csv"
+    filename_test = "../data/full/test/test2.csv"
 
 
     y_gold, y_pred = RNN(filename_train, filename_test)
 
-    #evaluation = evaluate(y_gold, y_pred, verbose = 1)
-    #print(evaluate)
+
+    evaluation = evaluate(y_gold, y_pred, verbose = 1)
+    print(evaluation)
+
 
 
 

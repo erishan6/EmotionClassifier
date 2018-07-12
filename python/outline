@@ -31,3 +31,6 @@ Experiments:
 Results:
     Quantitative analysis (Recall, Precision, F)
     Qualitative error analysis
+
+
+./bin/crawl-by-offset.sh terms.txt -1 100
