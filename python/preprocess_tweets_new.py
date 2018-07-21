@@ -71,8 +71,8 @@ def preprocess(filename, flag="implicit"):
 dir = "/home/deniz/Desktop/twittercrawler/data"
 filelist = ["data1.csv", "data2.csv", "data3.csv","data4.csv","data5.csv","data6.csv","data7.csv"]
 
-outfile_name_implicit = "implicit.csv"
-outfile_name_explicit = "explicit.csv"
+outfile_name_implicit = "../data/own/implicit.csv"
+outfile_name_explicit = "../data/own/explicit.csv"
 
 for filename in filelist:
     infile_path = dir+"/"+filename

@@ -1,12 +1,16 @@
 from random import shuffle
+import numpy as np
 
 dir = '/home/deniz/Arbeit/Uni Stuttgart/Semester 3/Teamlab/emotionclassifier/data/own'
 
 files = ["implicit.csv", "explicit.csv"]
 
 def shuffle_and_split(filename, train_ratio = 0.7):
+
+
     file = open(filename)
     tweets = file.readlines()
+    file.close()
 
     shuffle(tweets)
 
@@ -21,16 +25,22 @@ def shuffle_and_split(filename, train_ratio = 0.7):
     print(len(eval_tweets))
 
     labels = [i.split("\t")[0] for i in train_tweets]
-    import numpy as np
+
 
     print(np.unique(labels, return_counts=True))
 
-    for i in train_tweets:
-        label = i.split("\t")[0]
-        if label.__contains__("#TRIGGER"):
-            print(i)
-            exit()
+    filename = filename.replace(".csv", "")
+
+    file = open("{}_train.csv".format(filename), "w")
+    for tweet in train_tweets:
+        file.write(tweet)
+    file.close()
+
+    file = open("{}_eval.csv".format(filename), "w")
+    for tweet in eval_tweets:
+        file.write(tweet)
+    file.close()
 
 
-#shuffle_and_split(filename=dir+"/"+files[0])
-shuffle_and_split(filename=files[0])
+for file in files:
+    shuffle_and_split(filename=dir+"/"+file)
