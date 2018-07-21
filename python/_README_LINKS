@@ -1,0 +1,16 @@
+
+#Deniz data location on ims server
+    /home/users2/cevherdz/Sem3/TeamLab/data
+
+#Deniz twitter crawler location
+    /home/deniz/Desktop/twittercrawler
+
+
+
+
+#run twitter crawler
+    ./bin/crawl-by-offset.sh terms.txt -1 100
+
+
+python LSTM {embedding_depth} {learning_rate}
+

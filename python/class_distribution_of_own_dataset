@@ -1,0 +1,7 @@
+$ awk '{ print $1 }' implicit_train.csv | sort | uniq -c
+   8719 anger
+   3526 disgust
+  12580 fear
+   8772 joy
+  12422 sad
+  20026 surprise

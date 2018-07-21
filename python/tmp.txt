@@ -3,6 +3,3 @@
 
 
 
-
-download twitter embeddings for first step
-later experiment with own embeddings

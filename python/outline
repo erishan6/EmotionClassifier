@@ -32,5 +32,5 @@ Results:
     Quantitative analysis (Recall, Precision, F)
     Qualitative error analysis
 
-
+/home/deniz/Desktop/twittercrawler
 ./bin/crawl-by-offset.sh terms.txt -1 100
