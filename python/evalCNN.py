@@ -3,49 +3,26 @@
 import tensorflow as tf
 import numpy as np
 import os
-import time
-import datetime
 import emotion_detection
 from tensorflow.contrib import learn
 import csv
-import re
-import emoji
 
 # Parameters
 # ==================================================
 
-# Data Parameters
-tf.flags.DEFINE_string("positive_data_file", "./data/rt-polaritydata/rt-polarity.pos", "Data source for the positive data.")
-tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
-
 # Eval Parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
-tf.flags.DEFINE_boolean("eval_train", True, "Evaluate on all training data")
-# tf.flags.DEFINE_string("test_data", "music", "Target data for training (default: music)")
-
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
-
-
 FLAGS = tf.flags.FLAGS
-# FLAGS._parse_flags()
-print("\nParameters:")
-for attr, value in sorted(FLAGS.__flags.items()):
-    print("{}={}".format(attr.upper(), value))
-print("")
 
-# CHANGE THIS: Load data. Load your own data here
-if FLAGS.eval_train:
-    x_text, y, x_raw, y_test = emotion_detection.load_data("../data/full/data_original")
-    y_test = np.argmax(y_test, axis=1)
-    print(y_test)
-else:
-    x_raw = ["a masterpiece four years in the making", "everything is off."]
-    y_test = [1, 0]
-
+#x_raw, y_test, global_max_document_length = emotion_detection.load_dataset("../data/new/explicit_eval.csv")
+x_raw, y_test, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_eval.csv")
+y_test = np.argmax(y_test, axis=1)
+print(y_test)
 # Map data into vocabulary
 vocab_path = os.path.join(FLAGS.checkpoint_dir, "..", "vocab")
 global_vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
@@ -96,8 +73,14 @@ if y_test is not None:
     print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
 
 # Save the evaluation to a csv
-predictions_human_readable = np.column_stack((np.array(x_raw), all_predictions))
+all_predictions_label = emotion_detection.index_to_label(all_predictions)
+y_test_label =  emotion_detection.index_to_label(y_test)
+predictions_human_readable = np.column_stack((all_predictions,np.array(x_raw)))
 out_path = os.path.join(FLAGS.checkpoint_dir, "..", "prediction.csv")
 print("Saving evaluation to {0}".format(out_path))
 with open(out_path, 'w') as f:
     csv.writer(f).writerows(predictions_human_readable)
+
+evaluation = emotion_detection.evaluate(y_test_label, all_predictions_label, verbose = 2)
+print()
+print(evaluation)

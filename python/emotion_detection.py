@@ -13,35 +13,78 @@ np.set_printoptions(linewidth=100,)
 global_vocab_processor = None
 global_max_document_length = 0
 
+def get_avg_document_length(tweets):
+    doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
+    mean_doc_length = np.mean(doc_lengths)
+    std_doc_length = np.std(doc_lengths)
+    meanlength_plus_stdlength = mean_doc_length + std_doc_length
+    print("Avg document length {:g}".format(meanlength_plus_stdlength))
+    return int(meanlength_plus_stdlength)+1
+
+def label_to_one_hot(array):
+    y_one_hot = []
+    for label in array:
+        label = label.strip()
+        one_hot_label = []
+        if (label == "anger"):
+            one_hot_label = [1, 0, 0, 0, 0, 0]
+        elif (label == "disgust"):
+            one_hot_label = [0, 1, 0, 0, 0, 0]
+        elif (label == "fear"):
+            one_hot_label = [0, 0, 1, 0, 0, 0]
+        elif (label == "joy"):
+            one_hot_label = [0, 0, 0, 1, 0, 0]
+        elif (label == "sad"):
+            one_hot_label = [0, 0, 0, 0, 1, 0]
+        elif (label == "surprise"):
+            one_hot_label = [0, 0, 0, 0, 0, 1]
+        else:
+            one_hot_label = [0, 0, 0, 0, 0, 0]
+        y_one_hot.append(np.array(one_hot_label))
+
+    return np.array(y_one_hot)
+
+def index_to_label(array):
+    y_index_to_label = []
+    for label in array:
+        if (label == 0):
+            one_hot_label = "anger"
+        elif (label == 1):
+            one_hot_label = "disgust"
+        elif (label == 2):
+            one_hot_label = "fear"
+        elif (label == 3):
+            one_hot_label = "joy"
+        elif (label == 4):
+            one_hot_label = "sad"
+        elif (label == 5):
+            one_hot_label = "surprise"
+        else:
+            one_hot_label = "anger"
+        y_index_to_label.append(np.array(one_hot_label))
+
+    return np.array(y_index_to_label)
+
+def load_dataset(filename):
+    '''
+        this function reads a file and seperates labels from sentences and creates a dataset file
+        :param test_filename:
+        :return:
+    '''
+    data_train = np.loadtxt(filename, delimiter="\t", dtype=str, comments=None)
+    y = label_to_one_hot(data_train[:, 0])
+    x = data_train[:, 1]
+    x = [preprocess_tweet(x) for x in x]
+    number_of_train_instances = len(x)
+    # print(number_of_train_instances)
+    return x, y, get_avg_document_length(x)
+
 def load_data(filename, training = True): #TODO: DENIZ
     '''
     this function reads a file and seperates labels from sentences and creates a train-test-split
     :param test_filename:
     :return:
     '''
-
-    def label_to_one_hot(array):
-        y_one_hot = []
-        for label in array:
-            label = label.strip()
-            one_hot_label = []
-            if (label == "anger"):
-                one_hot_label = [1, 0, 0, 0, 0, 0]
-            elif (label == "disgust"):
-                one_hot_label = [0, 1, 0, 0, 0, 0]
-            elif (label == "fear"):
-                one_hot_label = [0, 0, 1, 0, 0, 0]
-            elif (label == "joy"):
-                one_hot_label = [0, 0, 0, 1, 0, 0]
-            elif (label == "sad"):
-                one_hot_label = [0, 0, 0, 0, 1, 0]
-            elif (label == "surprise"):
-                one_hot_label = [0, 0, 0, 0, 0, 1]
-            else:
-                one_hot_label = [0,0,0,0,0,0]
-            y_one_hot.append(np.array(one_hot_label))
-
-        return np.array(y_one_hot)
 
     if training:
         print(">>> loading training data...")
@@ -85,21 +128,8 @@ def create_vocabmapping(tweets, training = True): #TODO: DENIZ
         exit(0)
 
     if training: #create new vocab_processor using training data
-
-        doc_lengths = np.array([len(tweet.split(" ")) for tweet in tweets])
-
-
-        mean_doc_length = np.mean(doc_lengths)
-
-        std_doc_length = np.std(doc_lengths)
-
-        meanlength_plus_stdlength = mean_doc_length + std_doc_length
-
-
-
-        global_max_document_length = int(meanlength_plus_stdlength)
+        global_max_document_length = get_avg_document_length(tweets)
         global_vocab_processor = learn.preprocessing.VocabularyProcessor(global_max_document_length)
-
         matrix = np.array(list(global_vocab_processor.fit_transform(tweets)))
 
 
@@ -122,7 +152,6 @@ def create_vocabmapping(tweets, training = True): #TODO: DENIZ
 
             padded_tweets.append(tweet_padded)
         matrix = np.array(padded_tweets)
-
 
     return matrix
 

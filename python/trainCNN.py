@@ -3,22 +3,16 @@
 import tensorflow as tf
 import numpy as np
 import os
-import time
 import datetime
 from network import Network
 import emotion_detection
-import emoji
 from tensorflow.contrib import learn
-import re
-from random import random
 
 # Parameters
 # ==================================================
 
 # Data loading params
 tf.flags.DEFINE_float("dev_sample_percentage", .1, "Percentage of the training data to use for validation")
-# tf.flags.DEFINE_string("positive_data_file", "./data/rt-polaritydata/rt-polarity.pos", "Data source for the positive data.")
-# tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
 
 # Model Hyperparameters
 tf.flags.DEFINE_integer("embedding_dim", 128, "Dimensionality of character embedding (default: 128)")
@@ -26,40 +20,30 @@ tf.flags.DEFINE_string("filter_sizes", "3,4,5", "Comma-separated filter sizes (d
 tf.flags.DEFINE_integer("num_filters", 128, "Number of filters per filter size (default: 128)")
 tf.flags.DEFINE_float("dropout_keep_prob", 0.5, "Dropout keep probability (default: 0.5)")
 tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularization lambda (default: 0.0)")
+tf.flags.DEFINE_boolean("use_adam", False, "Select optimizer to use. Default is RMSPropOptimizer, else use AdamOptimizer")
+tf.flags.DEFINE_string("activation_function", "softmax", "Select activation function to use. Default is softmax")
 
 # Training parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_integer("num_epochs", 100, "Number of training epochs (default: 100)")
-tf.flags.DEFINE_integer("evaluate_every", 90, "Evaluate model on dev set after this many steps (default: 100)")
-tf.flags.DEFINE_integer("checkpoint_every", 90, "Save model after this many steps (default: 100)")
+tf.flags.DEFINE_integer("num_epochs", 50, "Number of training epochs (default: 50)")
+tf.flags.DEFINE_integer("evaluate_every", 50, "Evaluate model on dev set after this many steps (default: 50)")
+tf.flags.DEFINE_integer("checkpoint_every", 10, "Save model after this many steps (default: 50)")
 tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
-tf.flags.DEFINE_boolean("use_adam", False, "Select optimizer to use. Default is AdamOptimizer, else use RMSPropOptimizer")
-tf.flags.DEFINE_string("activation_function", "softmax", "Select activation function to use. Default is relu")
+
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
 
 FLAGS = tf.flags.FLAGS
-# FLAGS._parse_flags()
-print("\nParameters:")
-for attr, value in sorted(FLAGS.__flags.items()):
-    print("{}={}".format(attr.upper(), value))
-print("")
-
-print("use_adam=" + str(FLAGS.use_adam))
-print("activation_function=" + str(FLAGS.activation_function))
-
-# Data Preparation
-# ==================================================
-
 # Load data
 print("Loading data...")
-x_text, y, x_test, y_test = emotion_detection.load_data("../data/full/data_original")
+# x_text, y, global_max_document_length = emotion_detection.load_dataset("../data/new/explicit_train.csv")
+x_text, y, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_train.csv")
 # print(y)
 
 y = np.array(y)
 # Build vocabulary
-global_max_document_length = max([len(x.split(" ")) for x in x_text])
+#global_max_document_length = max([len(x.split(" ")) for x in x_text])
 global_vocab_processor = learn.preprocessing.VocabularyProcessor(global_max_document_length)
 x = np.array(list(global_vocab_processor.fit_transform(x_text)))
 print(x)
@@ -77,7 +61,6 @@ x_train, x_dev = x_shuffled[:dev_sample_index], x_shuffled[dev_sample_index:]
 y_train, y_dev = y_shuffled[:dev_sample_index], y_shuffled[dev_sample_index:]
 
 del x, y, x_shuffled, y_shuffled
-
 print("Vocabulary Size: {:d}".format(len(global_vocab_processor.vocabulary_)))
 print("Train/Dev split: {:d}/{:d}".format(len(y_train), len(y_dev)))
 
@@ -119,7 +102,8 @@ with tf.Graph().as_default():
         grad_summaries_merged = tf.summary.merge(grad_summaries)
 
         # Output directory for models and summaries
-        timestamp = str(int(time.time()))
+        # timestamp = str(int(time.time()))
+        timestamp = FLAGS.activation_function
         out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
         print("Writing to {}\n".format(out_dir))
         # Checkpoint directory. Tensorflow assumes this directory already exists so we need to create it
@@ -129,6 +113,7 @@ with tf.Graph().as_default():
             os.makedirs(checkpoint_dir)
         # Write vocabulary
         global_vocab_processor.save(os.path.join(out_dir, "vocab"))
+
 
         # Summaries for loss and accuracy
         loss_summary = tf.summary.scalar("loss", loss_equation)
@@ -145,8 +130,6 @@ with tf.Graph().as_default():
         dev_summary_writer = tf.summary.FileWriter(dev_summary_dir, sess.graph)
 
         saver = tf.train.Saver(tf.global_variables(), max_to_keep=FLAGS.num_checkpoints)
-
-
 
         # Initialize all variables
         sess.run(tf.global_variables_initializer())
