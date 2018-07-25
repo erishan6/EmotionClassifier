@@ -14,13 +14,17 @@ import csv
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
 
+#Test Dataset
+tf.flags.DEFINE_string("testdata", "", "Testdata location")
+
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
 FLAGS = tf.flags.FLAGS
 
 #x_raw, y_test, global_max_document_length = emotion_detection.load_dataset("../data/new/explicit_eval.csv")
-x_raw, y_test, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_eval.csv")
+# x_raw, y_test, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_eval.csv")
+x_raw, y_test, global_max_document_length = emotion_detection.load_dataset(FLAGS.testdata)
 y_test = np.argmax(y_test, axis=1)
 print(y_test)
 # Map data into vocabulary

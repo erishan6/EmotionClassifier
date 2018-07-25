@@ -31,6 +31,9 @@ tf.flags.DEFINE_integer("evaluate_every", 50, "Evaluate model on dev set after t
 tf.flags.DEFINE_integer("checkpoint_every", 10, "Save model after this many steps (default: 50)")
 tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
 
+#Train Dataset
+tf.flags.DEFINE_string("traindata", "", "Traindata location")
+
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
 tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
@@ -39,7 +42,9 @@ FLAGS = tf.flags.FLAGS
 # Load data
 print("Loading data...")
 # x_text, y, global_max_document_length = emotion_detection.load_dataset("../data/new/explicit_train.csv")
-x_text, y, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_train.csv")
+# x_text, y, global_max_document_length = emotion_detection.load_dataset("../data/new/implicit_train.csv")
+x_text, y, global_max_document_length = emotion_detection.load_dataset(FLAGS.traindata)
+
 # print(y)
 
 y = np.array(y)
