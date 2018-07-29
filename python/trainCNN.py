@@ -17,18 +17,18 @@ tf.flags.DEFINE_float("dev_sample_percentage", .1, "Percentage of the training d
 
 # Model Hyperparameters
 tf.flags.DEFINE_integer("embedding_dim", 128, "Dimensionality of character embedding (default: 128)")
-tf.flags.DEFINE_string("filter_sizes", "7,8,9", "Comma-separated filter sizes (default: '3,4,5')")
+tf.flags.DEFINE_string("filter_sizes", "7,8,9", "Comma-separated filter sizes (default: '7,8,9')")
 tf.flags.DEFINE_integer("num_filters", 128, "Number of filters per filter size (default: 128)")
 tf.flags.DEFINE_float("dropout_keep_prob", 0.5, "Dropout keep probability (default: 0.5)")
-tf.flags.DEFINE_float("l2_reg_lambda", 0.5, "L2 regularization lambda (default: 0.0)")
+tf.flags.DEFINE_float("l2_reg_lambda", 0.5, "L2 regularization lambda (default: 0.5)")
 tf.flags.DEFINE_boolean("use_adam", False, "Select optimizer to use. Default is RMSPropOptimizer, else use AdamOptimizer")
-tf.flags.DEFINE_string("activation_function", "softmax", "Select activation function to use. Default is softmax")
+tf.flags.DEFINE_string("activation_function", "relu", "Select activation function to use. Default is ReLU")
 
 # Training parameters
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
 tf.flags.DEFINE_integer("num_epochs", 50, "Number of training epochs (default: 50)")
 tf.flags.DEFINE_integer("evaluate_every", 50, "Evaluate model on dev set after this many steps (default: 50)")
-tf.flags.DEFINE_integer("checkpoint_every", 10, "Save model after this many steps (default: 50)")
+tf.flags.DEFINE_integer("checkpoint_every", 10, "Save model after this many steps (default: 10)")
 tf.flags.DEFINE_integer("num_checkpoints", 1, "Number of checkpoints to store (default: 1)")
 
 #Train Dataset

@@ -43,11 +43,11 @@ class Network(object):
                 # Apply nonlinearity
 
                 if activation_function=="tanh" :
-                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                    h = tf.nn.tanh(tf.nn.bias_add(conv, b), name="activation_function")
                 elif activation_function=="elu" :
-                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                    h = tf.nn.elu(tf.nn.bias_add(conv, b), name="activation_function")
                 elif activation_function=="softplus" :
-                    h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
+                    h = tf.nn.softplus(tf.nn.bias_add(conv, b), name="activation_function")
                 else :
                     h = tf.nn.relu(tf.nn.bias_add(conv, b), name="activation_function")
 
