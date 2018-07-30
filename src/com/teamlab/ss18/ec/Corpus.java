@@ -1,6 +1,5 @@
 package com.teamlab.ss18.ec;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -22,8 +21,7 @@ public class Corpus {
         this.filePath = filePath;
         this.numberOfLabels = numberOfLabels;
 
-        //TODO: how do we use the overloaded create method?
-
+        tweets = create();
 
     }
 

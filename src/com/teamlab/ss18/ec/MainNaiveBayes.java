@@ -12,26 +12,27 @@ public class MainNaiveBayes {
          * Set init parameters      *
          ****************************
          */
-        String trainFilePath = "data/full/train/train.csv";
-        //String testFilePath = "data/full/test/test.csv";
-        double trainPercentage = 0.8;
-        int epochs = 2;
-        boolean shuffle = true;
-
+        String trainFilePath = "data/full/train.csv";
+        String testFilePath = "data/full/test.csv";
+//        double trainPercentage = 0.8;
         /*
          ****************************
          * Set init parameters      *
          ****************************
          */
 
-        DataSet dataSet = new DataSet();
-        dataSet.trainTestSplit(trainFilePath, trainPercentage, false);
+//        DataSet dataSet = new DataSet();
+//        dataSet.trainTestSplit(trainFilePath, trainPercentage, false);
+//
+//        Corpus trainCorpus = new Corpus("trainCorpus", "", 6);
+//        trainCorpus.create(dataSet.train);
+//        Corpus testCorpus = new Corpus("testCorpus", "", 6);
+//        testCorpus.create(dataSet.test);
 
-        Corpus trainCorpus = new Corpus("trainCorpus", "", 6);
-        trainCorpus.create(dataSet.train);
-        Corpus testCorpus = new Corpus("testCorpus", "", 6);
-        testCorpus.create(dataSet.test);
-
+        Corpus trainCorpus = new Corpus("train",trainFilePath,6);
+//        trainCorpus.create();
+        Corpus testCorpus = new Corpus("test",testFilePath,6);
+//        testCorpus.create();
         AbstractClassifier naiveBayesian = new NaiveBayesianClassifier(trainCorpus);
         naiveBayesian.train();
         naiveBayesian.predict(testCorpus);
