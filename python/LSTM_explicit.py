@@ -387,6 +387,10 @@ def RNN(train_filename, test_filename, current_time, embedding_depth=128, learni
     y_pred = [np.argmax(pred) for pred in predictions]
     y_gold = [np.argmax(gold) for gold in y_test]
 
+    #print()
+    #print(y_pred)
+    #print(y_gold)
+
     return y_gold, y_pred
 
 
@@ -403,10 +407,29 @@ if __name__ == "__main__":
     else:
         learning_rate = 0.001
 
+    #filename_train = "../data/iest/full/02_dev/iest_dev.csv"
+    #filename_test = "../data/iest/full/03_eval/iest_eval.csv"
 
-    filename_train = "../data/iest_train.csv"
-    filename_test = "../data/iest_eval.csv"
+    #filename_train = "../data/own_explicit_train.csv"
+    #filename_test = "../data/own_explicit_eval.csv"
 
+
+   # filename_train = "../data/full/02_dev/iest_dev.csv"
+   # filename_test = "../data/full/03_eval/iest_eval.csv"
+
+
+
+    #filename_train = "../data/own_explicit_train.csv"
+    #filename_test = "../data/own_explicit_eval.csv"
+
+    #filename_train = "../data/iest_train.csv"
+    #filename_test = "../data/iest_eval.csv"
+
+    filename_train = "../data/own_explicit_train.csv"
+    filename_test = "../data/own_explicit_eval.csv"
+
+    #filename_train = "../data/own_implicit_train.csv"
+    #filename_test = "../data/own_implicit_eval.csv"
 
     current_time = get_current_time()
     y_gold, y_pred = RNN(filename_train, filename_test,
@@ -414,7 +437,7 @@ if __name__ == "__main__":
                          embedding_depth=embedding_depth, learning_rate=learning_rate)
 
 
-    filename_prefix = "{}_emb-{}_lr-{}_iest".format(current_time, embedding_depth, learning_rate)
+    filename_prefix = "{}_emb-{}_lr-{}_explicit".format(current_time, embedding_depth, learning_rate)
 
 
     pred_file = open(filename_prefix + "_predictions.pred", "w")

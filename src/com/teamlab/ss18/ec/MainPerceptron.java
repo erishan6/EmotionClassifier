@@ -13,9 +13,20 @@ public class MainPerceptron {
         * Set init parameters      *
         ****************************
         */
-        String trainFilePath = "data/full/data_original";
+        //String trainFilePath = "data/full/data_original";
+        String trainFilePath = "data/iest/full/01_train/iest_train.csv";
+
+        try{
+            trainFilePath = args[0];
+        } catch (Exception e){
+            System.out.println("Please provide the filepath for the iest data!");
+            System.out.println("Program terminated...");
+            System.exit(0);
+        }
+
+
         //String testFilePath = "data/full/test/test.csv";
-        double trainPercentage = 0.8;
+        double trainPercentage = 0.7;
         int epochs = 100;
         boolean shuffle = true;
 
