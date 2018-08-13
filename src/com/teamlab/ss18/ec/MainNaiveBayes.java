@@ -12,8 +12,17 @@ public class MainNaiveBayes {
          * Set init parameters      *
          ****************************
          */
+
         String trainFilePath = "data/full/train.csv";
         String testFilePath = "data/full/test.csv";
+        try{
+            trainFilePath = args[0];
+            testFilePath = args[1];
+        } catch (Exception e){
+            System.out.println("Please provide the appropriate filepaths for the iest train and test data!");
+            System.out.println("Program terminated...");
+            System.exit(0);
+        }
 //        double trainPercentage = 0.8;
         /*
          ****************************

@@ -7,23 +7,23 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../ProgrammingProjecs/jars/emoji-java-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../JarFiles/emoji-java-4.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../ProgrammingProjecs/jars/java-json.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../JarFiles/java-json.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../../ProgrammingProjecs/jars/java-json.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../JarFiles/java-json.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

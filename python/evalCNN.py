@@ -79,7 +79,7 @@ if y_test is not None:
 # Save the evaluation to a csv
 all_predictions_label = emotion_detection.index_to_label(all_predictions)
 y_test_label =  emotion_detection.index_to_label(y_test)
-predictions_human_readable = np.column_stack((all_predictions,np.array(x_raw)))
+predictions_human_readable = np.column_stack((y_test,all_predictions,np.array(x_raw)))
 out_path = os.path.join(FLAGS.checkpoint_dir, "..", "prediction.csv")
 print("Saving evaluation to {0}".format(out_path))
 with open(out_path, 'w') as f:
