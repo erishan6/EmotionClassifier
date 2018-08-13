@@ -1,0 +1,36 @@
+Intro:
+    Research Question
+    Why is it relevant? examples (1. implicit, 2. explicit to make clear)
+
+Methods: (~1 page)
+    Baseline (Perceptron, NB)
+    CNN description (formal explanation) convince that we understood
+    RNN description (formal explanation)
+    Embeddings
+
+
+Experiments:
+    setting:
+        map experiments to Rquest
+        Parameters:
+            number of filters
+            number of layers
+            dropouts
+            activations
+            optimizer
+            etc.
+        Datasets:
+            Size
+            type of data
+                mode
+                source
+    tweak 2 different hyperparams and run both datasets
+    implicit emotion word recognition setup
+    explicit emotion word recognition setup
+
+Results:
+    Quantitative analysis (Recall, Precision, F)
+    Qualitative error analysis
+
+/home/deniz/Desktop/twittercrawler
+./bin/crawl-by-offset.sh terms.txt -1 100
